@@ -30,10 +30,10 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
         # Cerchiamo i k Neighbors più vicini e prendiamo le loro label
         for i in range(0, self.k):
             dist_min = np.argmin(distances)
-            label.append(self.y.iloc[dist_min])
+            label.append(self.y[dist_min])
             distances[dist_min] = float('inf')
         # Determiniamo l'etichetta da predire in base a quella più frequente tra i k Neighbors
-        label_classe = stats.mode(label)
+        label_classe = stats.mode(label).mode
         return label_classe
 
     def predict(self, test_x):
@@ -42,11 +42,11 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
         for i in range(len(test_x)):
             row = test_x.iloc[i, :]
             # Calcolo delle distanze in base al tipo specificato
-            if self.distance_type == "Euclidea":
+            if self.distance == "Euclidea":
                 distances = euclidean_distances(self.X, [row])
-            elif self.distance_type == "Manhattan":
+            elif self.distance == "Manhattan":
                 distances = manhattan_distances(self.X, [row])
-            elif self.distance_type == "Chebyshev":
+            elif self.distance == "Chebyshev":
                 distances = self.CalculateChebyshev(row)
             else:
                 raise TypeError("Tipo di distanza non supportato")
