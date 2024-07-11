@@ -13,7 +13,7 @@ from metrics import calculateMetrics
 from custom_Multi import CustomRandomForest as CRF
 
     
-data = 'Shape'
+data = 'Mixed'
 distance = 'Chebyshev'
 train_x,test_x, train_y, test_y = DS_Splitter(data)
 

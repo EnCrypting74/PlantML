@@ -20,5 +20,5 @@ def calculateMetrics(predictions, labels):
     # FPR = FP / (TN + FP)
     # FNR = FN / (FN + TP)
     # TNR = TN / (FN + TN)
-    
-    return("Precision = ",Right/len(labels))
+
+    return("Accuracy = ",Right/len(labels))
