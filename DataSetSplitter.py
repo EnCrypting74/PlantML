@@ -2,6 +2,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder 
 import pandas as pd
+from Preprocessing import syntheticData
 
 def DS_Splitter(type):
     if type == 'Shape':
@@ -57,6 +58,7 @@ def DS_Splitter(type):
         texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header = None)
         texture_col_names = ['species'] + [f'texture_{i+1}' for i in range(texture_data.shape[1] - 1)]
         texture_data.columns = texture_col_names
+        texture_data = syntheticData(texture_data)
         texture_labels = texture_data['species']
 
         shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)

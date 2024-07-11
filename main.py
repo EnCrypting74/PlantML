@@ -67,7 +67,7 @@ class Menu():
     def CustomKNN(self):
 
         data = 'Mixed'
-        distance = 'Chebyshev'
+        distance = 'Manhattan'
 
         train_x,test_x, train_y, test_y = DS_Splitter(data)
         kNN_clas = cNN(distance = distance)
