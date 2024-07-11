@@ -3,10 +3,10 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import numpy as np
 from scipy import stats
 
-#utilizzeremo ClassifierMixin e BaseEstimator per rendere 
+# Utilizzeremo ClassifierMixin e BaseEstimator per rendere 
 # il nostro K-NN compatibile con scikit-learn 
 class Custom_kNN(ClassifierMixin, BaseEstimator):
-    def __init__(self, k = 4, distance = 'Manhattan'):
+    def __init__(self, k = 6, distance = 'Manhattan'):
         self.k = k
         self.distance = distance
     
@@ -42,7 +42,7 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
         for i in range(len(test_x)):
             row = test_x.iloc[i, :]
             # Calcolo delle distanze in base al tipo specificato
-            if self.distance == "Euclidea":
+            if self.distance == "Euclidean":
                 distances = euclidean_distances(self.X, [row])
             elif self.distance == "Manhattan":
                 distances = manhattan_distances(self.X, [row])

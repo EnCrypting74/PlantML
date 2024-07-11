@@ -2,9 +2,6 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder 
 import pandas as pd
-import numpy as np
-from custom_kNN import Custom_kNN as cNN
-from MatriciDiConfusione import MatriciDiConfusione
 
 def DS_Splitter(type):
     if type == 'Shape':
@@ -55,16 +52,7 @@ def DS_Splitter(type):
         print('Texture training set:', train_x.shape)
         print('Texture validation set:', test_x.shape)
         return train_x,test_x, train_y, test_y
-    else:
-        raise TypeError("Tipo non supportato")
     
-data = 'Shape'
-train_x,test_x, train_y, test_y = DS_Splitter(data)
+    else:
 
-kNN_clas = cNN()
-
-kNN_clas.fit(train_x,train_y)
-
-pred_y = kNN_clas.predict(test_x)
-
-MatriciDiConfusione(pred_y, test_y)
+        raise TypeError("Tipo non supportato")
