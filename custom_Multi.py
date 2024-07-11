@@ -7,7 +7,7 @@ from scipy import stats
 
 class CustomRandomForest():
 
-    def __init__ (self,num_trees = 500, depth = 400, random_seed = 0):
+    def __init__ (self, num_trees = 500, depth = 400, random_seed = 0):
         self.num_trees = num_trees
         self.tree_array = []
         self.column_array = []

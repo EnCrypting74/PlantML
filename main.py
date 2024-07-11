@@ -14,12 +14,13 @@ from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
 from metrics import calculateMetrics
 from custom_Multi import CustomRandomForest as CRF
-
+from MatriciDiConfusione import MatriciDiConfusione
 
 class Menu():
         
     def __init__(self,root):
         # Creiamo la finestra del menù
+        self.root = root
         root.title("Progetto Machine Learning")
         root.geometry("1024x768")
         mainframe = ttk.Frame(root,padding = "20 5 20 5", relief='raised')
@@ -66,19 +67,32 @@ class Menu():
 
     def CustomKNN(self):
 
+        window = Toplevel(self.root)
+        window.geometry("500x400")
+        window.title("Custom kNN results ")
+
         data = 'Mixed'
         distance = 'Manhattan'
+
+        ttk.Label(window, text = ("Dataset = ",data," distance type =",distance)).grid(column = 1, row = 2, sticky = W)
 
         train_x,test_x, train_y, test_y = DS_Splitter(data)
         kNN_clas = cNN(distance = distance)
         
         kNN_clas.fit(train_x,train_y)
         pred_y = kNN_clas.predict(test_x)
-        
-        print("kNN custom : ",calculateMetrics(pred_y,test_y))
+
+        output = calculateMetrics(pred_y,test_y)
+        ttk.Label(window, text = output).grid(column = 1, row = 3, sticky = W)
+        #MatriciDiConfusione(pred_y, test_y)
+
         return
 
     def CustomRF(self):
+
+        window = Toplevel(self.root)
+        window.geometry("500x400")
+        window.title("Custom Random Forest results ")
 
         data = 'Mixed'
 
@@ -90,7 +104,9 @@ class Menu():
 
         pred_y = Multi_clas.predict(test_x)
 
-        print("Random Forest Custom : ",calculateMetrics(pred_y,test_y))
+        ttk.Label(window, text = (Multi_clas.num_trees," alberi di profondità ",Multi_clas.depth)).grid(column = 1, row = 1, sticky = W)
+        output = calculateMetrics(pred_y,test_y)
+        ttk.Label(window, text = output).grid(column = 1, row = 2, sticky = W)
         return
 
 
