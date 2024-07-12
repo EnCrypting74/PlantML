@@ -4,6 +4,8 @@ from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 
 def syntheticData(texture_data):
+    # Funzione per creare il record mancante della prima classe tramite media
+
     prime_15_righe = texture_data.head(15)
     colonne_da_calcolare = prime_15_righe.iloc[:, 1:]
 

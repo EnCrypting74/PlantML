@@ -8,10 +8,10 @@ from scipy import stats
 class CustomRandomForest():
 
     def __init__ (self, num_trees = 15, depth = 25, random_seed = 0):
-        self.num_trees = num_trees
-        self.tree_array = []
-        self.column_array = []
-        self.depth = depth
+        self.num_trees = num_trees # Numero di alberi 
+        self.tree_array = []       # Array degli alberi creati
+        self.column_array = []     # Array delle colonne degli alberi
+        self.depth = depth         # Profondità alberi
         self.random_seed = random_seed
 
     def fit(self, x, y):
@@ -26,7 +26,7 @@ class CustomRandomForest():
             # Estrarre un numero casuale di colonne dal DataFrame
             columns = np.random.choice(x.columns, size = col_num, replace=False)
 
-            # Salvo le colonne selezionate. Torneranno utili in fase di test
+            # Salvo le colonne selezionate per fare poi il test
             self.column_array.append(columns)
 
             # Creare un nuovo DataFrame con le colonne estratte
@@ -35,10 +35,10 @@ class CustomRandomForest():
             # Esegui lo split del dataset per selezionare record random dal nuovo dataframe campione
             train_x, _, train_y, _ = train_test_split(extracted, y, test_size=0.35, random_state=i + self.random_seed)
 
-            #istanza di un albero di classificazione con una profondità di defaulf
+            # Istanza di un albero di classificazione con una profondità di default
             dTree_clf = DecisionTreeClassifier(max_depth = self.depth, random_state = i + self.random_seed)
 
-            #salvo l'albero della foresta generato
+            # Salvo l'albero generato
             self.tree_array.append(dTree_clf)
 
             # Addestramento
@@ -65,11 +65,11 @@ class CustomRandomForest():
             row_selected = record[current_col].to_frame().transpose()
             labels.append(self.tree_array[i].predict(row_selected)[0])
 
-        # Trova l'elemento con l'occorrenza massima (se sono uguali, ne sceglie uno casuale)
+        # Trova l'elemento con l'occorrenza massima
         label_classe = stats.mode(labels).mode
         return label_classe
     
     def fit_predict(self, train_x, train_y, test_x):
-        # Addestramento del modello e predizione sulle istanze di test
+        # Addestramento del modello e predizione sul test set
         self.fit(train_x, train_y)
         return self.predict(test_x)
