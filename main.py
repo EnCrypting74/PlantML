@@ -17,6 +17,9 @@ from DataSetSplitter import DS_Splitter
 from metrics import calculateMetrics
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import NormalizeDataset
+from svm import svm
+from decisionTree import decisionTree
+from clustering import clustering
 
 class Menu():
         
@@ -114,7 +117,7 @@ class Menu():
         self.model = tk.StringVar()
         ttk.Radiobutton(model_frame, text = 'SVM', variable = self.model, value = ModelType[0]).pack()
         ttk.Radiobutton(model_frame, text = 'Decision Tree', variable = self.model, value = ModelType[1]).pack()
-        ttk.Radiobutton(model_frame, text = 'Mobile', variable = self.model, value = ModelType[2]).pack()
+        ttk.Radiobutton(model_frame, text = 'Clustering', variable = self.model, value = ModelType[2]).pack()
         ttk.Radiobutton(model_frame, text = 'Custom kNN', variable = self.model, value = ModelType[3]).pack()
         ttk.Radiobutton(model_frame, text = 'Custom Random Forest', variable = self.model, value = ModelType[4]).pack()
  
@@ -148,9 +151,9 @@ class Menu():
         if model == 'SVM':
             return self.SVM_clas()
         elif model == 'DecisionTree':
-            return
+            return self.DecisionTree()
         elif model == 'Standard 3':
-            return
+            return self.Clustering()
         elif model == 'Custom_kNN':
             return self.CustomKNN()
         elif model == 'Custom_RForest':
@@ -165,7 +168,12 @@ class Menu():
         window.title("SupportVectorMachine results ")
 
         # Funzione per istanziare il classificatore SVM
+        data = 'Total'
 
+        train_x, test_x, train_y, test_y = DS_Splitter(data)
+        
+        ttk.Label(window, text =calculateMetrics(svm.svm_fit(train_x, test_x, train_y, test_y),test_y)).pack(pady=10)
+        
         return
     
     def DecisionTree(self):
@@ -175,14 +183,25 @@ class Menu():
 
         # Funzione per istanziare il classificatore Decision Tree
 
+        data = 'Total'
+
+        train_x, test_x, train_y, test_y = DS_Splitter(data)
+        
+        ttk.Label(window, text =calculateMetrics(decisionTree.decisionTree_fit(train_x, test_x, train_y, test_y),test_y)).pack(pady=10)
+
         return
     
-    def Standard_3(self):
+    def Clustering(self):
         window = tk.Toplevel(self.root)
         window.geometry("500x400")
         window.title("Standard results ")
 
         # Funzione per istanziare il classificatore Standard n°3
+        data = 'Total'
+
+        train_x, test_x, train_y, test_y = DS_Splitter(data)
+        
+        ttk.Label(window, text =calculateMetrics(clustering.cluster_fit(train_x, test_x, train_y, test_y),test_y)).pack(pady=10)
 
         return
     
