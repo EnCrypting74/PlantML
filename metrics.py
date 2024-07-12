@@ -1,24 +1,20 @@
+import numpy as np
+from sklearn.metrics import confusion_matrix,roc_auc_score, precision_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 def calculateMetrics(predictions, labels):
     #definizione metriche
-    # TP = 0
-    # TN = 0
-    # FP = 0
-    # FN = 0
-    # FPR = 0
-    # TPR = 0
-    # FNR = 0
-    # TNR =0
-    Right = 0
-    Wrong = 0
-    for i in range(len(labels)):
-        if labels[i] == predictions[i]:
-            Right +=1
-        elif labels[i] != predictions[i]:
-            Wrong += 1
-        
-    # TPR = TP / (TP + FP)
-    # FPR = FP / (TN + FP)
-    # FNR = FN / (FN + TP)
-    # TNR = TN / (FN + TN)
 
-    return("Accuracy = ",Right/len(labels))
+    # Overall accuracy
+    ACC = accuracy_score(labels, predictions)
+    # Recall
+    REC = recall_score(labels, predictions, average='macro',zero_division=np.nan) 
+    # Precision  
+    PRE = precision_score(labels, predictions, average='macro',zero_division=np.nan)
+    # False Positive Rate
+    F1 = f1_score(labels, predictions, average='macro',zero_division=np.nan) 
+    
+    #AUC = roc_auc_score(labels, predictions, multi_class='ovr')  da fixare
+    c_matrix= confusion_matrix(labels, predictions) #illeggibile, da fixare
+
+    return(f'Accuracy = {ACC} \nPrecision = {PRE} \nRecall = {REC} \nF1 score = {F1}\n ')
