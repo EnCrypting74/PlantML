@@ -4,7 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from Preprocessing import syntheticData
 
-def DS_Splitter(type):
+def DS_Splitter(type = 'Total'):
     if type == 'Shape':
 
         shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)

@@ -16,7 +16,7 @@ from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
 from metrics import calculateMetrics
 from custom_Multi import CustomRandomForest as CRF
-from MatriciDiConfusione import MatriciDiConfusione
+from Preprocessing import NormalizeDataset
 
 class Menu():
         
@@ -61,6 +61,8 @@ class Menu():
         # Creiamo la schermata per la scelta del modello
         train_screen = tk.Toplevel(self.root)
         train_screen.title("Training")
+        train_screen.geometry("500x300")
+        # Creiamo i Frame per separare le varie opzioni
         model_frame = tk.Frame(train_screen)
         model_frame.pack(side = tk.LEFT, padx = 10, pady = 10)
         preproc_frame = tk.Frame(train_screen)
@@ -71,7 +73,7 @@ class Menu():
         ModelType = ['SVM','DecisionTree','Standard 3','Custom_kNN','Custom_RForest']
 
         # Seleziona il classificatore
-        ttk.Label(model_frame, text = "Select Classifier : ").pack(pady = 10)
+        ttk.Label(model_frame, text = "Select Classifier : ").pack(side = tk.TOP, anchor = "nw")
 
         # Creazione scelta del modello
         self.model = tk.StringVar()
@@ -82,12 +84,13 @@ class Menu():
         Custom_RForest = ttk.Radiobutton(model_frame, text = 'Custom Random Forest', variable = self.model, value = ModelType[4]).pack()
  
         # Creazione scelta preprocessing
-        ttk.Label(preproc_frame, text = "Select Preprocessing : ").pack()
+        ttk.Label(preproc_frame, text = "Select Preprocessing : ").pack(side = tk.TOP, anchor = "ne")
         self.checkbox_values = {
-                "Opzione 1": tk.IntVar(),
-                "Opzione 2": tk.IntVar(),
-                "Opzione 3": tk.IntVar(),
-                "Opzione 4": tk.IntVar()
+                "Normalizantion": tk.IntVar(),
+                "Aggregation": tk.IntVar(),
+                "Feature Selection": tk.IntVar(),
+                "Reduce Dimensionality": tk.IntVar(),
+                "Sampling": tk.IntVar()
             }
             
         # Creazione delle checkbox
@@ -101,6 +104,10 @@ class Menu():
 
 
     def trainModel(self, model, preprocessing):
+        for item in preprocessing:
+            if item == 'Normalize':
+                NormalizeDataset()
+
         if model == 'SVM':
             return self.SVM_clas()
         elif model == 'DecisionTree':

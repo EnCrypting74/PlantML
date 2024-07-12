@@ -20,3 +20,6 @@ def syntheticData(texture_data):
     texture_data = pd.concat([syntheticRecord,texture_data],axis = 0 ,ignore_index=True)
 
     return texture_data
+
+def NormalizeDataset():
+    return
