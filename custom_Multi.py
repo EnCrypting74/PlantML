@@ -1,13 +1,13 @@
-from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
+from DataSetSplitter import DS_Splitter
 import numpy as np
 import random
 from scipy import stats
 
 class CustomRandomForest():
 
-    def __init__ (self, num_trees = 500, depth = 400, random_seed = 0):
+    def __init__ (self, num_trees = 15, depth = 25, random_seed = 0):
         self.num_trees = num_trees
         self.tree_array = []
         self.column_array = []
@@ -20,13 +20,13 @@ class CustomRandomForest():
             random.seed(i + self.random_seed)
             np.random.seed(i + self.random_seed)
 
-            # numero di colonne da estrarre
+            # Numero di colonne da estrarre
             col_num = random.randint(1, len(x.columns))
 
             # Estrarre un numero casuale di colonne dal DataFrame
             columns = np.random.choice(x.columns, size = col_num, replace=False)
 
-            #salvo le colonne selezionate. Torneranno utili in fase di test
+            # Salvo le colonne selezionate. Torneranno utili in fase di test
             self.column_array.append(columns)
 
             # Creare un nuovo DataFrame con le colonne estratte
@@ -57,7 +57,7 @@ class CustomRandomForest():
         return labels
     
     def hard_voting(self, record):
-        # Votazione rigida (hard voting) per ottenere l'etichetta di classe più comune tra gli alberi
+        # Hard voting per ottenere la label di classe più comune tra gli alberi
         labels = []
 
         for i in range(len(self.tree_array)):

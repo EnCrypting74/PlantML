@@ -10,12 +10,12 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
         self.k = k
         self.distance = distance
     
-    def fit(self, X, y):
+    def fit(self, train_X, train_y):
         #controlliamo che gli array siano di dimensioni compatibili
-        if X.shape[0] != y.shape[0]:
+        if train_X.shape[0] != train_y.shape[0]:
             raise ValueError("Dimensioni errate")
-        self.X = X
-        self.y = y
+        self.X = train_X
+        self.y = train_y
     
     def CalculateChebyshev(self, row):
         # Calcoliamo la distanza di chebyshev (non supportata da sklearn.metrics.pairwise)
@@ -59,3 +59,7 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
             else:
                 raise ValueError("Valore di k errato")
         return predict
+    
+    def fit_predict(self, train_x, train_y, test_x):
+        self.fit(train_x,train_y)
+        return self.predict(test_x)

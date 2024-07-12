@@ -71,19 +71,14 @@ class Menu():
         window.geometry("500x400")
         window.title("Custom kNN results ")
 
-        data = 'Mixed'
-        distance = 'Manhattan'
-
-        ttk.Label(window, text = ("Dataset = ",data," distance type =",distance)).grid(column = 1, row = 2, sticky = W)
+        data = 'Total'
 
         train_x,test_x, train_y, test_y = DS_Splitter(data)
-        kNN_clas = cNN(distance = distance)
+        kNN_clas = cNN()
         
-        kNN_clas.fit(train_x,train_y)
-        pred_y = kNN_clas.predict(test_x)
-
-        output = calculateMetrics(pred_y,test_y)
-        ttk.Label(window, text = output).grid(column = 1, row = 3, sticky = W)
+        ttk.Label(window, text = ("K-Nearest Neighbors on total dataset with distance type =",kNN_clas.distance,"and k = ",kNN_clas.k)).grid(column = 1, row = 2, sticky = W)
+        
+        ttk.Label(window, text = calculateMetrics(kNN_clas.fit_predict(train_x,train_y,test_x),test_y)).grid(column = 1, row = 3, sticky = W)
         #MatriciDiConfusione(pred_y, test_y)
 
         return
@@ -94,19 +89,17 @@ class Menu():
         window.geometry("500x400")
         window.title("Custom Random Forest results ")
 
-        data = 'Mixed'
+        data = 'Total'
 
         Multi_clas = CRF()
 
         train_x,test_x, train_y, test_y = DS_Splitter(data)
 
-        Multi_clas.fit(train_x,train_y)
-
-        pred_y = Multi_clas.predict(test_x)
+        Multi_clas.fit_predict(train_x, train_y, test_x)
 
         ttk.Label(window, text = (Multi_clas.num_trees," alberi di profondità ",Multi_clas.depth)).grid(column = 1, row = 1, sticky = W)
-        output = calculateMetrics(pred_y,test_y)
-        ttk.Label(window, text = output).grid(column = 1, row = 2, sticky = W)
+       
+        ttk.Label(window, text =calculateMetrics(Multi_clas.fit_predict(train_x, train_y, test_x),test_y)).grid(column = 1, row = 2, sticky = W)
         return
 
 

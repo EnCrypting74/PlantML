@@ -54,7 +54,7 @@ def DS_Splitter(type):
         print('Texture validation set:', test_x.shape)
         return train_x,test_x, train_y, test_y
     
-    elif type == 'Mixed':
+    elif type == 'Total':
         texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header = None)
         texture_col_names = ['species'] + [f'texture_{i+1}' for i in range(texture_data.shape[1] - 1)]
         texture_data.columns = texture_col_names
@@ -74,15 +74,14 @@ def DS_Splitter(type):
         partial_ds = pd.concat([texture_data,shape_data], axis = 1,names=[texture_data.columns]+[shape_data.columns])
         mixed_ds = pd.concat([partial_ds,margin_data], axis = 1,names=[partial_ds.columns]+[margin_data.columns] )
         mixed_labels = mixed_ds['species']
-        mixed_ds = mixed_ds.drop(mixed_ds.columns[0], axis = 1)
 
         mixed_label_encoder = LabelEncoder()
         mixed_encoded_labels = mixed_label_encoder.fit_transform(mixed_labels)
         mixed_ds = mixed_ds.drop(mixed_ds.columns[0], axis = 1)
         
         train_x, test_x, train_y, test_y = train_test_split(mixed_ds, mixed_encoded_labels, random_state=0, test_size=0.25)
-        print('Texture training set:', train_x.shape)
-        print('Texture validation set:', test_x.shape)
+        print('Total training set:', train_x.shape)
+        print('Total validation set:', test_x.shape)
         return train_x,test_x, train_y, test_y
 
     else:
