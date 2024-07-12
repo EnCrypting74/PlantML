@@ -1,6 +1,5 @@
-
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder 
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 import pandas as pd
 
 def syntheticData(texture_data):
@@ -24,4 +23,5 @@ def syntheticData(texture_data):
     return texture_data
 
 def NormalizeDataset():
+    
     return

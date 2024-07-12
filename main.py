@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Import di librerie standard
 import numpy as np
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics
+from metrics import calculateMetrics, histo, calc_zeros
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import NormalizeDataset
 from svm import svm
@@ -68,8 +68,10 @@ class Menu():
         ttk.Label(descriptor_frame, text = "Prime 5 righe del file Shape : ").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()}zeri').pack(pady = 10)   
+
         ttk.Button(descriptor_frame, text = "See more info", command = self.dataStat).pack(pady = 10)
-        ttk.Button(descriptor_frame, text = "See graphs", command = None).pack(pady = 10)
+        ttk.Button(descriptor_frame, text = "See graphs", command = self.dataGraph).pack(pady = 10)
         ttk.Button(descriptor_frame, text="Back", command = dataset_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
 
     def dataStat(self):
@@ -82,11 +84,9 @@ class Menu():
         descriptor_frame.pack(side = tk.LEFT, pady = 10)
 
         # Mostriamo le statistiche delle feature di shape
-        ttk.Label(descriptor_frame, text = "Statistiche Shape ").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).describe()).pack(pady = 10)
 
         # Mostriamo le statistiche delle feature di margin
-        ttk.Label(descriptor_frame, text = "Statistiche Margin").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).describe()).pack(pady = 10)
 
         # Mostriamo le statistiche delle feature di Texture
@@ -95,6 +95,29 @@ class Menu():
         
         ttk.Button(descriptor_frame, text = "Back", command = datastat_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
  
+    def dataGraph(self):
+        datagraph_screen = tk.Toplevel(self.root)
+        datagraph_screen.title("Dataset")
+        datagraph_screen.geometry("500x600")
+
+        # Creiamo il frame che conterrà le info
+        descriptor_frame = ttk.Frame(datagraph_screen)
+        descriptor_frame.pack(pady = 10)
+
+        fig,ax = histo('Margin')
+        canvas = FigureCanvasTkAgg(fig, master = descriptor_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
+        
+        fig,ax = histo('Texture')
+        canvas = FigureCanvasTkAgg(fig, master = descriptor_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
+
+        ttk.Button(descriptor_frame, text = "Back", command = datagraph_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
+ 
+        return
+    
     def selectTrain(self):
         # Creiamo la schermata per la scelta del modello
         train_screen = tk.Toplevel(self.root)

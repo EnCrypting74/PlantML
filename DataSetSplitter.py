@@ -11,6 +11,8 @@ def DS_Splitter(type = 'Total'):
         shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)
         shape_col_names = ['species'] + [f'shape_{i+1}' for i in range(shape_data.shape[1] - 1)]
         shape_data.columns = shape_col_names
+        # Ordinamento alfabetico del dataset
+        shape_data = shape_data.sort_values(by='species').reset_index(drop=True)
         shape_labels = shape_data['species']
         
         # Encoding labels 
