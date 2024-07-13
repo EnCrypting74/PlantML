@@ -36,6 +36,29 @@ def calc_zeros():
 
     return total_zeros
 
+
+def calc_outliers():
+    # Funzione per calcolare il numero di outlier nel dataset
+    def count_outliers(data):
+        Q1 = data.quantile(0.25)
+        Q3 = data.quantile(0.75)
+        IQR = Q3 - Q1
+        outliers = ((data < (Q1 - 1.5 * IQR)) | (data > (Q3 + 1.5 * IQR))).sum().sum()
+        return outliers
+
+    texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header=None)
+    shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header=None)
+    margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header=None)
+
+    outliers_texture = count_outliers(texture_data)
+    outliers_shape = count_outliers(shape_data)
+    outliers_margin = count_outliers(margin_data)
+
+    total_outliers = outliers_texture + outliers_shape + outliers_margin
+
+    return total_outliers
+
+
 def histo(tipo):
     # Visualizza istogrammi texture e margin
     if tipo == 'Margin':

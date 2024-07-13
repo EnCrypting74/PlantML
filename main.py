@@ -10,7 +10,7 @@ import pandas as pd
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics, histo, calc_zeros
+from metrics import calculateMetrics, histo, calc_zeros, calc_outliers
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import normalizeDataset, aggregateFeatures
 from svm import svm
@@ -65,7 +65,7 @@ class Menu():
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
         ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()} zeri').pack(pady = 10)   
-
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_outliers()} outliers').pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See more info", command = self.dataStat).pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See graphs", command = self.dataGraph).pack(pady = 10)
         ttk.Button(descriptor_frame, text="Back", command = dataset_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
