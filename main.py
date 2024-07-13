@@ -10,7 +10,7 @@ import pandas as pd
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics, histo, calc_zeros, show_auc, find_outliers
+from metrics import calculateMetrics, histo, calc_zeros, show_auc, find_outliers, calc_nan
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import normalizeDataset, aggregateFeatures
 from svm import svm
@@ -42,6 +42,8 @@ class Menu():
 
         tk.Button(mainscreen, text="Train Model", command=self.selectTrain).pack(pady=10)
 
+        tk.Button(mainscreen, text="Best Model", command=self.selectBest).pack(pady=10)
+
         # Pulsante per terminare il programma
         ttk.Button(mainscreen, text = "Exit", command = exit).pack(pady=10)
 
@@ -64,9 +66,26 @@ class Menu():
         ttk.Label(descriptor_frame, text = "Prime 5 righe del file Shape : ").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
-        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()} zeri su 307200 valori').pack(pady = 10)   
-        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {find_outliers()} outliers').pack(pady = 10)
-        ttk.Button(descriptor_frame, text = "See more info", command = self.dataStat).pack(pady = 10)
+        # Calcoliamo e mostriamo il numero di zeri nel dataset
+        zeros, dict_zeros = calc_zeros()
+        f1 = open("diz_zeri.txt",'w+') # Dopo aver visualizzato per la prima volta le informazioni sul dataset, il numero di zeri per feature sarà consultabile in questo file
+        f1.write(f'{(dict_zeros)}')
+        f1.close()
+
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {zeros} zeri su 307200 valori').pack(pady = 10)  
+
+        # Calcoliamo e mostriamo il numero di Nan nel dataset
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_nan()} Nan').pack(pady = 10)   
+
+        # Calcoliamo e mostriamo il numero di outliers nel dataset
+        num_outliers, dict_outliers = find_outliers()
+        f2 = open("diz_out.txt", 'w') # Dopo aver visualizzato per la prima volta le informazioni sul dataset, il numero di outliers per feature sarà consultabile in questo file
+        f2.write(f'{dict_outliers}')
+        f2.close()
+
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {num_outliers} outliers').pack(pady = 10)
+
+        ttk.Button(descriptor_frame, text = "See more statistics", command = self.dataStat).pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See graphs", command = self.dataGraph).pack(pady = 10)
         ttk.Button(descriptor_frame, text = "Back", command = dataset_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
 
@@ -146,10 +165,8 @@ class Menu():
         ttk.Label(preproc_frame, text = "Select Preprocessing : ").pack(side = tk.TOP, anchor = "ne")
         self.checkbox_values = {
                 "Normalization": tk.IntVar(),
-                "Aggregation": tk.IntVar(),
-                "Feature Selection": tk.IntVar(),
-                "Add Synthetic Record": tk.IntVar(),
-                "Sampling": tk.IntVar()
+                "Aggregation*16": tk.IntVar(),
+                "Aggregation*32": tk.IntVar()
             }
             
         # Creazione delle checkbox per il preprocessing
@@ -169,16 +186,17 @@ class Menu():
     def trainModel(self, model, preprocessing):
         # Funzione che istanzia il classificatore selezionato con le tecniche di preprocessing scelte
         data = 'Total'
-        print(preprocessing)
-
         train_x,test_x, train_y, test_y = DS_Splitter(data)
 
+        # Applicazione preprocessing
         if "Normalization" in preprocessing:
                 train_x, test_x = normalizeDataset(train_x, test_x)
-        if "Aggregation" in preprocessing:
-                train_x,test_x = aggregateFeatures(train_x, test_x)
-        if "Add Synthetic Record" in preprocessing:
-                return
+        if "Aggregation*16" in preprocessing:
+                train_x,test_x = aggregateFeatures(train_x, test_x, mode = 16)
+        if "Aggregation*32" in preprocessing:
+                train_x,test_x = aggregateFeatures(train_x, test_x, mode = 32)
+        
+        # Istanzia il classificatore
         if model == 'SVM':
             return self.SVM_clas(train_x,test_x, train_y, test_y)
         elif model == 'DecisionTree':
@@ -248,10 +266,10 @@ class Menu():
         graph_frame = ttk.Frame(window)
         graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
 
-        fig= show_auc(test_y,predictions)
-        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(pady = 20)
+        #fig= show_auc(test_y,predictions)
+        #canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        #canvas.draw()
+        #canvas.get_tk_widget().pack(pady = 20)
     
     def CustomKNN(self,train_x,test_x, train_y, test_y):
         window = tk.Toplevel(self.root)
@@ -305,7 +323,32 @@ class Menu():
         canvas.draw()
         canvas.get_tk_widget().pack(pady = 20)
 
+    def selectBest(self):
+        # Combinazione migliore di modello e preprocessing
+        window = tk.Toplevel(self.root)
+        window.geometry("1000x750")
+        window.title("SupportVectorMachine results ")
 
+        data = 'Total'
+        train_x,test_x, train_y, test_y = DS_Splitter(data)
+        train_x, test_x = normalizeDataset(train_x, test_x)
+
+        ttk.Label(window, text ="Il modello migliore risulta la Support Vector Machine addestrata sull'intero dataset\nLe performance migliorano di vari punti percentuali con la normalizzazione MinMax").pack(side = tk.TOP, pady=10)
+
+        # Funzione per istanziare il classificatore SVM e mostrare le metriche
+        predictions = svm.svm_fit(train_x, test_x, train_y, test_y)
+        ttk.Label(window, text ="SVM Results :").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text =calculateMetrics(predictions,test_y)).pack(pady=10)
+        ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
 
 root = tk.Tk()
 menu = Menu(root)

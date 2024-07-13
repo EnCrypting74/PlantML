@@ -22,8 +22,6 @@ def DS_Splitter(type = 'Total', split = 'T'):
 
         # Split del dataset in train e test
         train_x, test_x, train_y, test_y = train_test_split(shape_data, shape_labels, random_state=0, test_size=0.25)
-        print('Shape training set:', train_x.shape)
-        print('Shape validation set:', test_x.shape)
 
         return train_x, test_x, train_y, test_y
 
@@ -42,8 +40,6 @@ def DS_Splitter(type = 'Total', split = 'T'):
 
         # Split del dataset in train e test
         train_x, test_x, train_y, test_y = train_test_split(margin_data, margin_labels, random_state=0, test_size=0.25)
-        print('Margin training set:', train_x.shape)
-        print('Margin validation set:', test_x.shape)
 
         return train_x, test_x, train_y, test_y
 
@@ -62,8 +58,6 @@ def DS_Splitter(type = 'Total', split = 'T'):
 
         # Split del dataset in train e test
         train_x, test_x, train_y, test_y = train_test_split(texture_data, texture_labels, random_state=0, test_size=0.25)
-        print('Texture training set:', train_x.shape)
-        print('Texture validation set:', test_x.shape)
         return train_x, test_x, train_y, test_y
     
     elif type == 'Total':
@@ -113,8 +107,6 @@ def DS_Splitter(type = 'Total', split = 'T'):
         
         # Split del dataset in train e test
         train_x, test_x, train_y, test_y = train_test_split(mixed_ds, mixed_encoded_labels, random_state=0, test_size=0.25)
-        print('Total training set:', train_x.shape)
-        print('Total validation set:', test_x.shape)
         return train_x, test_x, train_y, test_y
 
     else:

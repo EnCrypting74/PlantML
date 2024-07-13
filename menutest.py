@@ -1,47 +1,80 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import label_binarize
-from sklearn.metrics import roc_curve, auc
-from sklearn.multiclass import OneVsRestClassifier
-from itertools import cycle
+import tkinter as tk
+from tkinter import messagebox
 
-# Esempio di etichette reali e predizioni
-y_true = np.random.randint(0, 100, 1000)  # Etichette reali con 100 classi
-y_pred = np.random.randint(0, 100, 1000)  # Predizioni con 100 classi
+class MainApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Finestra Principale")
+        
+        # Configura la dimensione della finestra principale
+        self.root.geometry("300x250")
 
-# Binarizzazione delle etichette
-y_true_bin = label_binarize(y_true, classes=np.arange(100))
-y_pred_bin = label_binarize(y_pred, classes=np.arange(100))
+        # Creazione del pulsante per aprire la nuova finestra
+        open_button = tk.Button(self.root, text="Apri Nuova Finestra", command=self.open_new_window)
+        open_button.pack(pady=20)
 
-# Calcola le curve ROC e AUC per ogni classe
-fpr = dict()
-tpr = dict()
-roc_auc = dict()
-for i in range(100):
-    fpr[i], tpr[i], _ = roc_curve(y_true_bin[:, i], y_pred_bin[:, i])
-    roc_auc[i] = auc(fpr[i], tpr[i])
+        # Creazione del menù a tendina
+        self.dropdown_value = tk.StringVar(value="Seleziona un'opzione")
+        options = ["Opzione 1", "Opzione 2", "Opzione 3"]
+        dropdown = tk.OptionMenu(self.root, self.dropdown_value, *options)
+        dropdown.pack(pady=20)
 
-# Calcola la curva ROC media micro
-fpr["micro"], tpr["micro"], _ = roc_curve(y_true_bin.ravel(), y_pred_bin.ravel())
-roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+    def open_new_window(self):
+        # Crea una nuova finestra
+        new_win = tk.Toplevel(self.root)
+        new_win.title("Nuova Finestra")
+        
+        # Configura la dimensione della nuova finestra
+        new_win.geometry("300x200")
 
-# Plot della curva ROC per ciascuna classe
-plt.figure()
-plt.plot(fpr["micro"], tpr["micro"], label='micro-average ROC curve (area = {0:0.2f})'.format(roc_auc["micro"]))
+        # Variabili per memorizzare i valori selezionati delle checkbox
+        self.checkbox_values = {
+            "Opzione 1": tk.IntVar(),
+            "Opzione 2": tk.IntVar(),
+            "Opzione 3": tk.IntVar()
+        }
 
-# Plot delle curve ROC per alcune classi (per non sovraccaricare il grafico)
-colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
-for i, color in zip(range(3), colors):  # Mostra solo 3 classi come esempio
-    plt.plot(fpr[i], tpr[i], color=color, lw=2, label='ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i]))
+        # Creazione delle checkbox
+        tk.Label(new_win, text="Seleziona le opzioni:").pack(anchor=tk.W, pady=10)
+        for option, var in self.checkbox_values.items():
+            checkbox = tk.Checkbutton(new_win, text=option, variable=var)
+            checkbox.pack(anchor=tk.W)
 
-plt.plot([0, 1], [0, 1], 'k--', lw=2)
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic to Multi-class')
-plt.legend(loc="lower right")
-plt.show()
+        # Bottone per inviare i valori delle checkbox
+        submit_button = tk.Button(new_win, text="Invia", command=self.collect_checkbox_values)
+        submit_button.pack(pady=20)
+
+    def collect_checkbox_values(self):
+        # Raccogli i valori selezionati delle checkbox
+        selected_checkboxes = [option for option, var in self.checkbox_values.items() if var.get() == 1]
+        
+        # Passa i valori alla funzione di elaborazione
+        self.process_selection(selected_checkboxes)
+
+    def process_selection(self, selected_checkboxes):
+        # Stampa i valori selezionati
+        print("Checkbox selezionate:", selected_checkboxes)
+
+        # Mostra i valori selezionati in un messaggio di avviso
+        messagebox.showinfo("Selezioni", f"Checkbox selezionate: {', '.join(selected_checkboxes)}")
+
+        # Passa i valori selezionati alla funzione per creare una nuova finestra
+        self.show_selected_values(selected_checkboxes)
+
+    def show_selected_values(self, selected_values):
+        # Crea una nuova finestra
+        result_win = tk.Toplevel(self.root)
+        result_win.title("Valori Selezionati")
+        
+        # Configura la dimensione della nuova finestra
+        result_win.geometry("300x200")
+
+        # Mostra i valori selezionati nella nuova finestra
+        tk.Label(result_win, text="Hai selezionato:").pack(pady=10)
+        for value in selected_values:
+            tk.Label(result_win, text=value).pack()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = MainApp(root)
+    root.mainloop()

@@ -6,7 +6,6 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 from DataSetSplitter import DS_Splitter
 from itertools import cycle
-from collections import Counter
 
 def calculateMetrics(predictions, labels):
     #definizione metriche
@@ -19,8 +18,6 @@ def calculateMetrics(predictions, labels):
     PRE = precision_score(labels, predictions, average='macro',zero_division=0)
     # False Positive Rate
     F1 = f1_score(labels, predictions, average='macro',zero_division=0) 
-    
-    c_matrix= confusion_matrix(labels, predictions) #illeggibile, da fixare
     
     return(f'Accuracy = {ACC} \nPrecision = {PRE} \nRecall = {REC} \nF1 score = {F1}\n ')
 
@@ -61,19 +58,28 @@ def show_auc(labels, predictions):
 
     return fig
 
+def calc_nan():
+    # Calcola il numero di zeri nel dataset
+    data = DS_Splitter(split='F')
+    data = data.drop(data.columns[0], axis = 1)
+
+    nan_count = data.isna().sum().sum()
+
+    return nan_count
+
 def calc_zeros():
     # Calcola il numero di zeri nel dataset
-    texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header=None)
-    shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header=None)
-    margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header=None)
+    data = DS_Splitter(split='F')
+    data = data.drop(data.columns[0], axis = 1)
 
-    zero_counts_texture = (texture_data == 0).sum().sum()
-    zero_counts_shape = (shape_data == 0).sum().sum()
-    zero_counts_margin = (margin_data == 0).sum().sum()
+    zero_dict = {}
+    zero_counts = 0
 
-    total_zeros = zero_counts_texture + zero_counts_shape + zero_counts_margin
+    for column in data:
+        zero_dict[column] = (data[column] == 0).sum()
+        zero_counts += (data[column] == 0).sum()
 
-    return total_zeros
+    return zero_counts, zero_dict
 
 
 def find_outliers():
@@ -81,9 +87,9 @@ def find_outliers():
     # Creiamo un dizionario per conservare gli outlier per ogni colonna
     data = DS_Splitter(split='F')
     outliers_dict = {}
-    count = Counter()
-
-    for column in data.select_dtypes(include=[np.number]).columns:
+    num_outliers = 0
+    data = data.drop(data.columns[0], axis = 1)
+    for column in data.columns:
         # Calcolo dei quartili
         Q1 = data[column].quantile(0.25)
         Q3 = data[column].quantile(0.75)
@@ -96,8 +102,9 @@ def find_outliers():
         # Identificazione degli outlier
         outliers = data[(data[column] < lower_bound) | (data[column] > upper_bound)]
         outliers_dict[column] = len(outliers)
+        num_outliers += len(outliers)
 
-    return outliers_dict
+    return num_outliers, outliers_dict
 
 
 def histo(tipo):
