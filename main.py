@@ -49,7 +49,7 @@ class Menu():
         # Creiamo la schermata per l'analisi del dataset
         dataset_screen = tk.Toplevel(self.root)
         dataset_screen.title("Dataset")
-        dataset_screen.geometry("1000x500")
+        dataset_screen.geometry("1000x750")
         # Creiamo il frame che conterrà il testo
         descriptor_frame = ttk.Frame(dataset_screen)
         descriptor_frame.pack(side = tk.LEFT, pady = 10)
@@ -64,7 +64,7 @@ class Menu():
         ttk.Label(descriptor_frame, text = "Prime 5 righe del file Shape : ").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
-        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()}zeri').pack(pady = 10)   
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()} zeri').pack(pady = 10)   
 
         ttk.Button(descriptor_frame, text = "See more info", command = self.dataStat).pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See graphs", command = self.dataGraph).pack(pady = 10)

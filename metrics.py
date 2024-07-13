@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.metrics import confusion_matrix,roc_auc_score, precision_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
@@ -23,7 +24,17 @@ def calculateMetrics(predictions, labels):
 
 def calc_zeros():
     # Calcola il numero di zeri nel dataset
-    return
+    texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header=None)
+    shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header=None)
+    margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header=None)
+
+    zero_counts_texture = (texture_data == 0).sum().sum()
+    zero_counts_shape = (shape_data == 0).sum().sum()
+    zero_counts_margin = (margin_data == 0).sum().sum()
+
+    total_zeros = zero_counts_texture + zero_counts_shape + zero_counts_margin
+
+    return total_zeros
 
 def histo(tipo):
     # Visualizza istogrammi texture e margin
