@@ -39,7 +39,7 @@ def aggregateFeatures(train_x, test_x):
     # Funzione per l'aggregazione delle features da 64 valori per feature ad 1 valore per feature
     aggreg_train_ds = pd.DataFrame()
     aggreg_test_ds = pd.DataFrame()
-    
+        
     for line in range(len(train_x)):
         # Somma i valori delle feature per il training
         texture_row = train_x.iloc[line, 0:64].sum()

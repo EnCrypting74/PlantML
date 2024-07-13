@@ -150,7 +150,7 @@ class Menu():
                 "Normalization": tk.IntVar(),
                 "Aggregation": tk.IntVar(),
                 "Feature Selection": tk.IntVar(),
-                "Reduce Dimensionality": tk.IntVar(),
+                "Add Synthetic Record": tk.IntVar(),
                 "Sampling": tk.IntVar()
             }
             
@@ -179,7 +179,8 @@ class Menu():
                 train_x, test_x = normalizeDataset(train_x, test_x)
         if "Aggregation" in preprocessing:
                 train_x,test_x = aggregateFeatures(train_x, test_x)
-
+        if "Add Synthetic Record" in preprocessing:
+                return
         if model == 'SVM':
             return self.SVM_clas(train_x,test_x, train_y, test_y)
         elif model == 'DecisionTree':

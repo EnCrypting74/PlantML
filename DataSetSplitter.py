@@ -82,6 +82,8 @@ def DS_Splitter(type = 'Total'):
         shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)
         shape_col_names = ['species'] + [f'shape_{i+1}' for i in range(shape_data.shape[1] - 1)]
         shape_data.columns = shape_col_names
+        # Ordinamento alfabetico delle feature
+        shape_data = shape_data.sort_values(by='species').reset_index(drop=True)
         shape_data = shape_data.drop(shape_data.columns[0], axis = 1)
 
         # Margin vectors
@@ -99,6 +101,10 @@ def DS_Splitter(type = 'Total'):
         mixed_label_encoder = LabelEncoder()
         mixed_encoded_labels = mixed_label_encoder.fit_transform(mixed_labels)
         mixed_ds = mixed_ds.drop(mixed_ds.columns[0], axis = 1)
+        
+        # Se non selezioniamo di aggiungere il record sintetico per la prima classe
+        # droppiamo la riga corrispondente al record con shape mancante
+        mixed_ds = mixed_ds.dropna()
         
         # Split del dataset in train e test
         train_x, test_x, train_y, test_y = train_test_split(mixed_ds, mixed_encoded_labels, random_state=0, test_size=0.25)
