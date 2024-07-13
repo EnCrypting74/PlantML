@@ -6,6 +6,7 @@ from scipy import stats
 # Utilizzeremo ClassifierMixin e BaseEstimator per rendere 
 # il nostro K-NN compatibile con scikit-learn 
 class Custom_kNN(ClassifierMixin, BaseEstimator):
+    
     def __init__(self, k = 16, distance = 'Manhattan'):
         self.k = k
         self.distance = distance

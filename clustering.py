@@ -28,9 +28,7 @@ class clustering():
         ari = adjusted_rand_score(y, clusters)
         silhouette_avg = silhouette_score(X_scaled, clusters)
         
-        print(f"Adjusted Rand Index: {ari}")
-        print(f"Silhouette Score: {silhouette_avg}")
-    
+        return(f"Adjusted Rand Index: {ari}\n",f"Silhouette Score: {silhouette_avg}")
         ## Riduzione della dimensionalità per lo scatter plot
         #pca = PCA(n_components=2)
         #X_pca = pca.fit_transform(X_scaled)

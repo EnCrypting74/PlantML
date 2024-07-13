@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
+import numpy as np
 
 def syntheticData(texture_data):
     # Funzione per creare il record mancante della prima classe tramite media
@@ -22,6 +23,53 @@ def syntheticData(texture_data):
 
     return texture_data
 
-def NormalizeDataset():
+def normalizeDataset(train_x,test_x):
+
+    # Normalizza il dataset con una funzione Min-Max
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    train_x = scaler.fit_transform(train_x)
+    test_x = scaler.fit_transform(test_x)
     
-    return
+    train_x = pd.DataFrame(train_x)
+    test_x = pd.DataFrame(test_x)
+
+    return train_x, test_x
+
+def aggregateFeatures(train_x, test_x):
+    # Funzione per l'aggregazione delle features da 64 valori per feature ad 1 valore per feature
+    aggreg_train_ds = pd.DataFrame()
+    aggreg_test_ds = pd.DataFrame()
+    
+    for line in range(len(train_x)):
+        # Somma i valori delle feature per il training
+        texture_row = train_x.iloc[line, 0:64].sum()
+        shape_row = train_x.iloc[line, 64:128].sum()
+        margin_row = train_x.iloc[line, 128:192].sum()
+
+        # Normalizza i risultati
+        texture_row = texture_row / 64
+        shape_row = shape_row / 64
+        margin_row = margin_row / 64
+
+        # Crea un array aggregato e poi un DataFrame
+        aggreg_arr = np.array([texture_row, shape_row, margin_row])
+        aggreg_row = pd.DataFrame([aggreg_arr], columns=['Texture', 'Shape', 'Margin'])
+        aggreg_train_ds = pd.concat([aggreg_train_ds, aggreg_row], ignore_index=True)
+
+    for line in range(len(test_x)):
+        # Somma i valori delle feature per il test
+        texture_row = test_x.iloc[line, 0:64].sum()
+        shape_row = test_x.iloc[line, 64:128].sum()
+        margin_row = test_x.iloc[line, 128:192].sum()
+
+        # Normalizza i risultati
+        texture_row = texture_row / 64
+        shape_row = shape_row / 64
+        margin_row = margin_row / 64
+
+        # Crea un array aggregato e poi un DataFrame
+        aggreg_arr = np.array([texture_row, shape_row, margin_row])
+        aggreg_row = pd.DataFrame([aggreg_arr], columns=['Texture', 'Shape', 'Margin'])
+        aggreg_test_ds = pd.concat([aggreg_test_ds, aggreg_row], ignore_index=True)
+
+    return aggreg_train_ds, aggreg_test_ds

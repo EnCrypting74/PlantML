@@ -27,4 +27,4 @@ class decisionTree():
         #plot_tree(clf, filled=True, feature_names=[f'Valore_{i}' for i in range(1, combined_data.shape[1])], class_names=clf.classes_, rounded=True)
         #plt.show()
 
-        return pred_y
+        return y_pred
