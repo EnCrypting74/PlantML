@@ -32,7 +32,7 @@ class Menu():
 
     def createScreen(self):
         #creazione della schermata principale
-        mainscreen = ttk.Frame(self.root,padding = "20 5 20 5", relief='raised')
+        mainscreen = ttk.Frame(self.root, padding = "40 20 40 20", relief = "raised")
         mainscreen.pack(pady=10)
         
         # Inseriamo il testo ed i pulsanti iniziali
@@ -51,7 +51,7 @@ class Menu():
         # Creiamo la schermata per l'analisi del dataset
         dataset_screen = tk.Toplevel(self.root)
         dataset_screen.title("Dataset")
-        dataset_screen.geometry("1000x750")
+        dataset_screen.geometry("1000x700")
         # Creiamo il frame che conterrà il testo
         descriptor_frame = ttk.Frame(dataset_screen)
         descriptor_frame.pack(side = tk.LEFT, pady = 10)
@@ -63,8 +63,8 @@ class Menu():
         ttk.Label(descriptor_frame, text = ds_info.readlines()).pack(pady = 10)
 
         # Mostriamo una porzione del dataset
-        ttk.Label(descriptor_frame, text = "Prime 5 righe del file Shape : ").pack(pady = 10)
-        ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
+        ttk.Label(descriptor_frame, text = "Prime 5 righe del file Texture : ").pack(pady = 10)
+        ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Tex_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
         # Calcoliamo e mostriamo il numero di zeri nel dataset
         zeros, dict_zeros = calc_zeros()
@@ -142,6 +142,8 @@ class Menu():
         train_screen.geometry("500x300")
 
         # Creiamo i Frame per separare le varie opzioni
+        title_frame = tk.Frame(train_screen, relief = "raised")
+        title_frame.pack(side = tk.TOP, padx = 10, pady = 10)
         model_frame = tk.Frame(train_screen)
         model_frame.pack(side = tk.LEFT, padx = 10, pady = 10)
         preproc_frame = tk.Frame(train_screen)
@@ -149,9 +151,11 @@ class Menu():
         bottom_frame = tk.Frame(train_screen)
         bottom_frame.pack(side = tk.BOTTOM, padx = 20)
 
+        ttk.Label(title_frame, text = "Model Selection").pack(side = tk.TOP, anchor = "nw")
+
         # Seleziona il classificatore
         ModelType = ['SVM','DecisionTree','Clustering','Custom_kNN','Custom_RForest']
-        ttk.Label(model_frame, text = "Select Classifier : ").pack(side = tk.TOP, anchor = "nw")
+        ttk.Label(model_frame, text = "          Select Classifier : ").pack(side = tk.TOP, anchor = "nw")
 
         # Creazione scelta del modello tramite RadioButton (mutualmente esclusivi)
         self.model = tk.StringVar()
@@ -162,7 +166,7 @@ class Menu():
         ttk.Radiobutton(model_frame, text = 'Custom Random Forest', variable = self.model, value = ModelType[4]).pack()
  
         # Creazione scelta preprocessing come checkboxes (non mutualmente esclusivi)
-        ttk.Label(preproc_frame, text = "Select Preprocessing : ").pack(side = tk.TOP, anchor = "ne")
+        ttk.Label(preproc_frame, text = "Select Preprocessing :   ").pack(side = tk.TOP, anchor = "ne")
         self.checkbox_values = {
                 "Normalization": tk.IntVar(),
                 "Aggregation*16": tk.IntVar(),

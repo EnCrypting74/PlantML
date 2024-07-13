@@ -1,5 +1,7 @@
 Dataset formato da 100 classi diverse, ognuna rappresenta una foglia di una specie di albero differente. Sono presenti 16 campioni per classe etichettati a mano dai creatori del dataset.
-Sono forniti tre file in cui sono presenti i vettori di features precedentemente estratti e suddivisi per tipo. 64 vettori di shape(unico non in ordine alfabetico), 64 vettori di margine delle foglie e 64 vettori di texture.
+Sono forniti tre file in cui sono presenti i vettori di features precedentemente estratti e suddivisi per tipo. 
+64 vettori di shape(unico non in ordine alfabetico), 64 vettori di margine delle foglie e 64 vettori di texture.
+I record di margine e texture sono in ordine alfabetico decrescente, i record di shape no.
 Tutte i vettori di feature presentano valori compresi tra l'uno e lo zero, senza valori negativi.
 Nel file delle feature di texture manca un campione della prima classe (Acer Campestre).
 Le feature di shape sono descrittori di forma, mentre le feature di texture e margin  sono ottenuti da istogrammi.
