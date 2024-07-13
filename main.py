@@ -5,11 +5,7 @@ from tkinter import messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Import di librerie standard
-import numpy as np
-from sklearn.datasets import load_files
-from PIL import Image
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
@@ -84,9 +80,11 @@ class Menu():
         descriptor_frame.pack(side = tk.LEFT, pady = 10)
 
         # Mostriamo le statistiche delle feature di shape
+        ttk.Label(descriptor_frame, text = "Statistiche Shape ").pack(pady=10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).describe()).pack(pady = 10)
 
         # Mostriamo le statistiche delle feature di margin
+        ttk.Label(descriptor_frame, text = "Statistiche Margin ").pack(pady=10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).describe()).pack(pady = 10)
 
         # Mostriamo le statistiche delle feature di Texture
