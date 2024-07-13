@@ -10,11 +10,11 @@ def calculateMetrics(predictions, labels):
     # Overall accuracy
     ACC = accuracy_score(labels, predictions)
     # Recall
-    REC = recall_score(labels, predictions, average='macro',zero_division=np.nan) 
+    REC = recall_score(labels, predictions, average='macro',zero_division=0) 
     # Precision  
-    PRE = precision_score(labels, predictions, average='macro',zero_division=np.nan)
+    PRE = precision_score(labels, predictions, average='macro',zero_division=0)
     # False Positive Rate
-    F1 = f1_score(labels, predictions, average='macro',zero_division=np.nan) 
+    F1 = f1_score(labels, predictions, average='macro',zero_division=0) 
     
     #AUC = roc_auc_score(labels, predictions, multi_class='ovr')  da fixare
     c_matrix= confusion_matrix(labels, predictions) #illeggibile, da fixare
