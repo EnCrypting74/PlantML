@@ -10,7 +10,7 @@ import pandas as pd
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics, histo, calc_zeros, calc_outliers
+from metrics import calculateMetrics, histo, calc_zeros, show_auc, calc_outliers
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import normalizeDataset, aggregateFeatures
 from svm import svm
@@ -195,74 +195,115 @@ class Menu():
 
     def SVM_clas(self,train_x,test_x, train_y, test_y):
         window = tk.Toplevel(self.root)
-        window.geometry("500x400")
+        window.geometry("1000x750")
         window.title("SupportVectorMachine results ")
 
-        # Funzione per istanziare il classificatore SVM
-
+        # Funzione per istanziare il classificatore SVM e mostrare le metriche
+        predictions = svm.svm_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="SVM Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text =calculateMetrics(svm.svm_fit(train_x, test_x, train_y, test_y),test_y)).pack(pady=10)
-        
+        ttk.Label(window, text =calculateMetrics(predictions,test_y)).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
     
     def DecisionTree(self,train_x,test_x, train_y, test_y):
         window = tk.Toplevel(self.root)
-        window.geometry("500x400")
+        window.geometry("1000x750")
         window.title("DecisionTree results ")
 
-        # Funzione per istanziare il classificatore Decision Tree
-        
+        # Funzione per istanziare il classificatore Decision Tree e mostrare le metriche
+        predictions = decisionTree.decisionTree_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Decision Tree Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text =calculateMetrics(decisionTree.decisionTree_fit(train_x, test_x, train_y, test_y),test_y)).pack(pady=10)
-
+        ttk.Label(window, text =calculateMetrics(predictions,test_y)).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+                
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
     
     def Clustering(self,train_x,test_x, train_y, test_y):
         window = tk.Toplevel(self.root)
-        window.geometry("500x400")
+        window.geometry("1000x750")
         window.title("Clustering results ")
 
-        # Funzione per istanziare il classificatore di clustering
-        
+        # Funzione per istanziare il classificatore di clustering e mostrare le metriche
+        predictions = clustering.cluster_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Clustering Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text =clustering.cluster_fit(train_x, test_x, train_y, test_y)).pack(pady=10)
-
+        ttk.Label(window, text = predictions).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+        
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
     
     def CustomKNN(self,train_x,test_x, train_y, test_y):
         window = tk.Toplevel(self.root)
-        window.geometry("500x400")
+        window.geometry("1000x750")
         window.title("Custom K-NN results ")
         
-        # Funzione per istanziare il classificatore custom kNN
+        # Funzione per istanziare il classificatore custom kNN e mostrare le metriche
 
         kNN_clas = cNN()
         
         ttk.Label(window, text ="K-NN Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = ("K-Nearest Neighbors with distance type =",kNN_clas.distance,"and k = ",kNN_clas.k)).pack(pady = 5)
+        ttk.Label(window, text = "K-Nearest Neighbors with distance type = Manhattan and k = 16").pack(pady = 5)
         
-        ttk.Label(window, text = calculateMetrics(kNN_clas.fit_predict(train_x,train_y,test_x),test_y)).pack()
-        #MatriciDiConfusione(pred_y, test_y)
-
+        predictions = kNN_clas.fit_predict(train_x,train_y,test_x)
+        ttk.Label(window, text = calculateMetrics(predictions ,test_y)).pack()
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+        
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
 
     def CustomRF(self,train_x,test_x, train_y, test_y):
 
         window = tk.Toplevel(self.root)
-        window.geometry("500x400")
+        window.geometry("1000x750")
         window.title("Custom Random Forest results ")
 
-        # Funzione per istanziare il classificatore custom Random Forest
+        # Funzione per istanziare il classificatore custom Random Forest e mostrare le metriche
 
         Multi_clas = CRF()
 
-        Multi_clas.fit_predict(train_x, train_y, test_x)
+        predictions = Multi_clas.fit_predict(train_x, train_y, test_x)
 
-        ttk.Label(window, text ="Random Forest Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = (Multi_clas.num_trees," trees with depth = ",Multi_clas.depth)).pack(pady=10)
-        ttk.Label(window, text =calculateMetrics(Multi_clas.fit_predict(train_x, train_y, test_x),test_y)).pack(pady=10)
+        ttk.Label(window, text = "Random Forest Results :").pack(side = tk.TOP, pady = 10)
+        ttk.Label(window, text = "15 trees with depth = 25").pack(pady = 10)
+        ttk.Label(window, text = calculateMetrics(predictions, test_y)).pack(pady = 10)
         
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
+                
+        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        graph_frame = ttk.Frame(window)
+        graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
+
+        fig= show_auc(test_y,predictions)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
 
 
 

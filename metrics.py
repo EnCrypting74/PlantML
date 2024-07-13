@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import confusion_matrix,roc_auc_score, precision_score
+from sklearn.metrics import confusion_matrix, roc_curve, auc, precision_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 from DataSetSplitter import DS_Splitter
+from itertools import cycle
 
 def calculateMetrics(predictions, labels):
     #definizione metriche
@@ -17,10 +19,46 @@ def calculateMetrics(predictions, labels):
     # False Positive Rate
     F1 = f1_score(labels, predictions, average='macro',zero_division=0) 
     
-    #AUC = roc_auc_score(labels, predictions, multi_class='ovr')  da fixare
     c_matrix= confusion_matrix(labels, predictions) #illeggibile, da fixare
-
+    
     return(f'Accuracy = {ACC} \nPrecision = {PRE} \nRecall = {REC} \nF1 score = {F1}\n ')
+
+def show_auc(labels, predictions):
+       
+    # Binarizzazione delle etichette
+    y_true_bin = label_binarize(labels, classes=np.arange(100))
+    y_pred_bin = label_binarize(predictions, classes=np.arange(100))
+
+    # Calcola le curve ROC e AUC per ogni classe
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(100):
+        fpr[i], tpr[i], _ = roc_curve(y_true_bin[:,i], y_pred_bin[:,i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+
+    # Calcola la curva ROC media micro
+    fpr["micro"], tpr["micro"], _ = roc_curve(y_true_bin.ravel(), y_pred_bin.ravel())
+    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+    # Plot della curva ROC per ciascuna classe
+    fig = plt.figure()
+    plt.plot(fpr["micro"], tpr["micro"], label='micro-average ROC curve (area = {0:0.2f})'.format(roc_auc["micro"]))
+
+    # Plot delle curve ROC per alcune classi (per non sovraccaricare il grafico)
+    colors = cycle(['aqua', 'darkorange', 'cornflowerblue','green','purple'])
+    for i, color in zip(range(10), colors):  # Mostra solo 10 classi
+        plt.plot(fpr[i], tpr[i], color=color, lw=2, label='ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i]))
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=2)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC curves for 15 classes')
+    plt.legend(loc="lower right")
+
+    return fig
 
 def calc_zeros():
     # Calcola il numero di zeri nel dataset
