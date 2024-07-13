@@ -10,7 +10,7 @@ import pandas as pd
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics, histo, calc_zeros, show_auc, calc_outliers
+from metrics import calculateMetrics, histo, calc_zeros, show_auc, find_outliers
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import normalizeDataset, aggregateFeatures
 from svm import svm
@@ -64,11 +64,11 @@ class Menu():
         ttk.Label(descriptor_frame, text = "Prime 5 righe del file Shape : ").pack(pady = 10)
         ttk.Label(descriptor_frame, text = pd.read_csv("Dataset/data_Sha_64.txt", header = None).iloc[:,:15].head()).pack(pady = 10)
 
-        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()} zeri').pack(pady = 10)   
-        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_outliers()} outliers').pack(pady = 10)
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {calc_zeros()} zeri su 307200 valori').pack(pady = 10)   
+        ttk.Label(descriptor_frame, text = f'Nel dataset sono presenti {find_outliers()} outliers').pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See more info", command = self.dataStat).pack(pady = 10)
         ttk.Button(descriptor_frame, text = "See graphs", command = self.dataGraph).pack(pady = 10)
-        ttk.Button(descriptor_frame, text="Back", command = dataset_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
+        ttk.Button(descriptor_frame, text = "Back", command = dataset_screen.destroy).pack(side = tk.BOTTOM, pady = 10)
 
     def dataStat(self):
         datastat_screen = tk.Toplevel(self.root)
@@ -239,9 +239,9 @@ class Menu():
         window.title("Clustering results ")
 
         # Funzione per istanziare il classificatore di clustering e mostrare le metriche
-        predictions = clustering.cluster_fit(train_x, test_x, train_y, test_y)
+        ari, silhouette_avg, predictions = clustering.cluster_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Clustering Results :").pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = predictions).pack(pady=10)
+        ttk.Label(window, text = (f"Adjusted Rand Index: {ari}\n",f"Silhouette Score: {silhouette_avg}")).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
         
         # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico

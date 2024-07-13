@@ -6,6 +6,7 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 from DataSetSplitter import DS_Splitter
 from itertools import cycle
+from collections import Counter
 
 def calculateMetrics(predictions, labels):
     #definizione metriche
@@ -75,26 +76,28 @@ def calc_zeros():
     return total_zeros
 
 
-def calc_outliers():
-    # Funzione per calcolare il numero di outlier nel dataset
-    def count_outliers(data):
-        Q1 = data.quantile(0.25)
-        Q3 = data.quantile(0.75)
+def find_outliers():
+    # Funzione per cercare outlier outlier nel dataset
+    # Creiamo un dizionario per conservare gli outlier per ogni colonna
+    data = DS_Splitter(split='F')
+    outliers_dict = {}
+    count = Counter()
+
+    for column in data.select_dtypes(include=[np.number]).columns:
+        # Calcolo dei quartili
+        Q1 = data[column].quantile(0.25)
+        Q3 = data[column].quantile(0.75)
         IQR = Q3 - Q1
-        outliers = ((data < (Q1 - 1.5 * IQR)) | (data > (Q3 + 1.5 * IQR))).sum().sum()
-        return outliers
+        
+        # Limiti per gli outlier
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        
+        # Identificazione degli outlier
+        outliers = data[(data[column] < lower_bound) | (data[column] > upper_bound)]
+        outliers_dict[column] = len(outliers)
 
-    texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header=None)
-    shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header=None)
-    margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header=None)
-
-    outliers_texture = count_outliers(texture_data)
-    outliers_shape = count_outliers(shape_data)
-    outliers_margin = count_outliers(margin_data)
-
-    total_outliers = outliers_texture + outliers_shape + outliers_margin
-
-    return total_outliers
+    return outliers_dict
 
 
 def histo(tipo):

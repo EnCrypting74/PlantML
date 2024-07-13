@@ -4,7 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from Preprocessing import syntheticData
 
-def DS_Splitter(type = 'Total'):
+def DS_Splitter(type = 'Total', split = 'T'):
     if type == 'Shape':
 
         # Creazione della porzione di dataset con i vettori di feature di shape
@@ -25,7 +25,7 @@ def DS_Splitter(type = 'Total'):
         print('Shape training set:', train_x.shape)
         print('Shape validation set:', test_x.shape)
 
-        return train_x,test_x, train_y, test_y
+        return train_x, test_x, train_y, test_y
 
     elif type == 'Margin':
 
@@ -45,7 +45,7 @@ def DS_Splitter(type = 'Total'):
         print('Margin training set:', train_x.shape)
         print('Margin validation set:', test_x.shape)
 
-        return train_x,test_x, train_y, test_y
+        return train_x, test_x, train_y, test_y
 
     elif type == 'Texture':
         
@@ -64,7 +64,7 @@ def DS_Splitter(type = 'Total'):
         train_x, test_x, train_y, test_y = train_test_split(texture_data, texture_labels, random_state=0, test_size=0.25)
         print('Texture training set:', train_x.shape)
         print('Texture validation set:', test_x.shape)
-        return train_x,test_x, train_y, test_y
+        return train_x, test_x, train_y, test_y
     
     elif type == 'Total':
         
@@ -100,6 +100,11 @@ def DS_Splitter(type = 'Total'):
         # Encoding delle labels
         mixed_label_encoder = LabelEncoder()
         mixed_encoded_labels = mixed_label_encoder.fit_transform(mixed_labels)
+
+        # Nel caso ci serva il dataset non splittato
+        if split == 'F':
+            return mixed_ds
+        
         mixed_ds = mixed_ds.drop(mixed_ds.columns[0], axis = 1)
         
         # Se non selezioniamo di aggiungere il record sintetico per la prima classe
@@ -110,7 +115,7 @@ def DS_Splitter(type = 'Total'):
         train_x, test_x, train_y, test_y = train_test_split(mixed_ds, mixed_encoded_labels, random_state=0, test_size=0.25)
         print('Total training set:', train_x.shape)
         print('Total validation set:', test_x.shape)
-        return train_x,test_x, train_y, test_y
+        return train_x, test_x, train_y, test_y
 
     else:
 
