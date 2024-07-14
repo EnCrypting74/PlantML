@@ -146,8 +146,10 @@ class Menu():
         title_frame.pack(side = tk.TOP, padx = 10, pady = 10)
         model_frame = tk.Frame(train_screen)
         model_frame.pack(side = tk.LEFT, padx = 10, pady = 10)
+        feature_frame = tk.Frame(train_screen)
+        feature_frame.pack( padx = 10, pady = 10)
         preproc_frame = tk.Frame(train_screen)
-        preproc_frame.pack(side = tk.RIGHT, padx = 10, pady = 10)
+        preproc_frame.pack( padx = 10, pady = 10)
         bottom_frame = tk.Frame(train_screen)
         bottom_frame.pack(side = tk.BOTTOM, padx = 20)
 
@@ -176,21 +178,31 @@ class Menu():
         # Creazione delle checkbox per il preprocessing
         for option, var in self.checkbox_values.items():
             tk.Checkbutton(preproc_frame, text = option, variable=var).pack()
+
+        self.dropdown_value = tk.StringVar(value="Feature Selection : ")
+        options = ["No", "Texture", "Shape","Margin","Tex + Sha", "Tex + Mar",  "Sha + Mar"]
+        dropdown = tk.OptionMenu(feature_frame, self.dropdown_value, *options)
+        dropdown.pack(pady=20)
         
         # Tasti per avviare l'addestramento o tornare indietro
-        ttk.Button(bottom_frame, text="Train", command= lambda: self.get_preproc(self.model.get())).pack(side = tk.RIGHT, pady = 10)
+        ttk.Button(bottom_frame, text="Train", command= lambda: self.get_preproc(self.model.get(), self.dropdown_value.get())).pack(side = tk.RIGHT, pady = 10)
         ttk.Button(bottom_frame, text="Back", command = train_screen.destroy).pack(side = tk.LEFT, pady = 10) 
 
-    def get_preproc(self, model):
+    def get_preproc(self, model, feature):
         # Raccoglie le opzioni di preprocessing 
         preproc_options=[option for option, var in self.checkbox_values.items() if var.get() == 1] if hasattr(self, 'checkbox_values') else []
 
-        self.trainModel(model, preproc_options)
+        self.trainModel(model, preproc_options, feature)
 
-    def trainModel(self, model, preprocessing):
+    def trainModel(self, model, preprocessing, feature):
         # Funzione che istanzia il classificatore selezionato con le tecniche di preprocessing scelte
-        data = 'Total'
-        train_x,test_x, train_y, test_y = DS_Splitter(data)
+        # Split del dataset in base alla  feature selection : 
+        if feature == "No" :
+                data = 'Total'
+                train_x,test_x, train_y, test_y = DS_Splitter(data)
+        else:
+                data = feature
+                train_x,test_x, train_y, test_y = DS_Splitter(data)
 
         # Applicazione preprocessing
         if "Normalization" in preprocessing:
@@ -199,23 +211,23 @@ class Menu():
                 train_x,test_x = aggregateFeatures(train_x, test_x, mode = 16)
         if "Aggregation*32" in preprocessing:
                 train_x,test_x = aggregateFeatures(train_x, test_x, mode = 32)
-        
+        preprocessing.append(feature)
         # Istanzia il classificatore
         if model == 'SVM':
-            return self.SVM_clas(train_x,test_x, train_y, test_y)
+            return self.SVM_clas(train_x,test_x, train_y, test_y,preprocessing)
         elif model == 'DecisionTree':
-            return self.DecisionTree(train_x,test_x, train_y, test_y)
+            return self.DecisionTree(train_x,test_x, train_y, test_y,preprocessing)
         elif model == 'Clustering':
-            return self.Clustering(train_x,test_x, train_y, test_y)
+            return self.Clustering(train_x,test_x, train_y, test_y,preprocessing)
         elif model == 'Custom_kNN':
-            return self.CustomKNN(train_x,test_x, train_y, test_y)
+            return self.CustomKNN(train_x,test_x, train_y, test_y,preprocessing)
         elif model == 'Custom_RForest':
-            return self.CustomRF(train_x,test_x, train_y, test_y)
+            return self.CustomRF(train_x,test_x, train_y, test_y,preprocessing)
         else:
             messagebox.showinfo("Selezione", model)
             raise TypeError("modello o preprocessing non corretti")
 
-    def SVM_clas(self,train_x,test_x, train_y, test_y):
+    def SVM_clas(self,train_x,test_x, train_y, test_y,preprocessing):
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
         window.title("SupportVectorMachine results ")
@@ -223,6 +235,7 @@ class Menu():
         # Funzione per istanziare il classificatore SVM e mostrare le metriche
         predictions = svm.svm_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="SVM Results :").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =calculateMetrics(predictions,test_y)).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
 
@@ -235,7 +248,7 @@ class Menu():
         canvas.draw()
         canvas.get_tk_widget().pack(pady = 20)
     
-    def DecisionTree(self,train_x,test_x, train_y, test_y):
+    def DecisionTree(self,train_x,test_x, train_y, test_y,preprocessing):
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
         window.title("DecisionTree results ")
@@ -243,6 +256,7 @@ class Menu():
         # Funzione per istanziare il classificatore Decision Tree e mostrare le metriche
         predictions = decisionTree.decisionTree_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Decision Tree Results :").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =calculateMetrics(predictions,test_y)).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
                 
@@ -255,7 +269,7 @@ class Menu():
         canvas.draw()
         canvas.get_tk_widget().pack(pady = 20)
     
-    def Clustering(self,train_x,test_x, train_y, test_y):
+    def Clustering(self,train_x,test_x, train_y, test_y,preprocessing):
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
         window.title("Clustering results ")
@@ -263,6 +277,7 @@ class Menu():
         # Funzione per istanziare il classificatore di clustering e mostrare le metriche
         ari, silhouette_avg, predictions = clustering.cluster_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Clustering Results :").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text = (f"Adjusted Rand Index: {ari}\n",f"Silhouette Score: {silhouette_avg}")).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
         
@@ -275,7 +290,7 @@ class Menu():
         #canvas.draw()
         #canvas.get_tk_widget().pack(pady = 20)
     
-    def CustomKNN(self,train_x,test_x, train_y, test_y):
+    def CustomKNN(self,train_x,test_x, train_y, test_y,preprocessing):
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
         window.title("Custom K-NN results ")
@@ -285,6 +300,7 @@ class Menu():
         kNN_clas = cNN()
         
         ttk.Label(window, text ="K-NN Results :").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text = "K-Nearest Neighbors with distance type = Manhattan and k = 16").pack(pady = 5)
         
         predictions = kNN_clas.fit_predict(train_x,train_y,test_x)
@@ -300,7 +316,7 @@ class Menu():
         canvas.draw()
         canvas.get_tk_widget().pack(pady = 20)
 
-    def CustomRF(self,train_x,test_x, train_y, test_y):
+    def CustomRF(self,train_x,test_x, train_y, test_y,preprocessing):
 
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
@@ -313,6 +329,7 @@ class Menu():
         predictions = Multi_clas.fit_predict(train_x, train_y, test_x)
 
         ttk.Label(window, text = "Random Forest Results :").pack(side = tk.TOP, pady = 10)
+        ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text = "15 trees with depth = 25").pack(pady = 10)
         ttk.Label(window, text = calculateMetrics(predictions, test_y)).pack(pady = 10)
         
@@ -333,11 +350,11 @@ class Menu():
         window.geometry("1000x750")
         window.title("SupportVectorMachine results ")
 
-        data = 'Total'
+        data = 'Tex + Mar'
         train_x,test_x, train_y, test_y = DS_Splitter(data)
         train_x, test_x = normalizeDataset(train_x, test_x)
 
-        ttk.Label(window, text ="Il modello migliore risulta la Support Vector Machine addestrata sull'intero dataset\nLe performance migliorano di vari punti percentuali con la normalizzazione MinMax").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text ="Il modello migliore risulta la Support Vector Machine addestrata sulle feature di texture e margin\nLe performance migliorano di vari punti percentuali con la normalizzazione MinMax").pack(side = tk.TOP, pady=10)
 
         # Funzione per istanziare il classificatore SVM e mostrare le metriche
         predictions = svm.svm_fit(train_x, test_x, train_y, test_y)

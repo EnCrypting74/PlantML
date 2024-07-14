@@ -60,6 +60,88 @@ def DS_Splitter(type = 'Total', split = 'T'):
         train_x, test_x, train_y, test_y = train_test_split(texture_data, texture_labels, random_state=0, test_size=0.25)
         return train_x, test_x, train_y, test_y
     
+    elif type == 'Tex + Sha' :
+        
+        # Creazione della porzione di dataset con i vettori di feature di texture
+        texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header = None)
+        texture_col_names = ['species'] + [f'texture_{i+1}' for i in range(texture_data.shape[1] - 1)]
+        texture_data.columns = texture_col_names
+        # Aggiunta record sintetico
+        texture_data = syntheticData(texture_data)
+        texture_labels = texture_data['species']
+
+        # Encoding labels 
+        texture_label_encoder = LabelEncoder()
+        texture_labels = texture_label_encoder.fit_transform(texture_labels)
+        texture_data = texture_data.drop(texture_data.columns[0], axis = 1)
+
+        # Shape vectors
+        shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)
+        shape_col_names = ['species'] + [f'shape_{i+1}' for i in range(shape_data.shape[1] - 1)]
+        shape_data.columns = shape_col_names
+        # Ordinamento alfabetico delle feature
+        shape_data = shape_data.sort_values(by='species').reset_index(drop=True)
+        shape_data = shape_data.drop(shape_data.columns[0], axis = 1)
+
+        mixed_ds = pd.concat([texture_data,shape_data], axis = 1,names=[texture_data.columns]+[shape_data.columns])
+        # Split del dataset in train e test
+        train_x, test_x, train_y, test_y = train_test_split(mixed_ds, texture_labels, random_state=0, test_size=0.25)
+        return train_x, test_x, train_y, test_y
+    
+    elif type == 'Tex + Mar' :
+        
+        # Creazione della porzione di dataset con i vettori di feature di texture
+        texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header = None)
+        texture_col_names = ['species'] + [f'texture_{i+1}' for i in range(texture_data.shape[1] - 1)]
+        texture_data.columns = texture_col_names
+        # Aggiunta record sintetico
+        texture_data = syntheticData(texture_data)
+        texture_labels = texture_data['species']
+
+        # Encoding labels 
+        texture_label_encoder = LabelEncoder()
+        texture_labels = texture_label_encoder.fit_transform(texture_labels)
+        texture_data = texture_data.drop(texture_data.columns[0], axis = 1)
+
+        # Margin vectors
+        margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header = None)
+        margin_col_names = ['species'] + [f'margin_{i+1}' for i in range(margin_data.shape[1] - 1)]
+        margin_data.columns = margin_col_names
+        margin_data = margin_data.drop(margin_data.columns[0], axis = 1)
+
+
+        mixed_ds = pd.concat([texture_data, margin_data], axis = 1,names=[texture_data.columns]+[margin_data.columns])
+        # Split del dataset in train e test
+        train_x, test_x, train_y, test_y = train_test_split(mixed_ds, texture_labels, random_state=0, test_size=0.25)
+        return train_x, test_x, train_y, test_y
+    
+    elif type == 'Sha + Mar' :
+
+        # Creazione della porzione di dataset con i vettori di feature di shape
+        shape_data = pd.read_csv("Dataset/data_Sha_64.txt", header = None)
+        shape_col_names = ['species'] + [f'shape_{i+1}' for i in range(shape_data.shape[1] - 1)]
+        shape_data.columns = shape_col_names
+        # Ordinamento alfabetico del dataset
+        shape_data = shape_data.sort_values(by='species').reset_index(drop=True)
+        shape_labels = shape_data['species']
+        
+        # Encoding labels 
+        shape_label_encoder = LabelEncoder()
+        shape_labels = shape_label_encoder.fit_transform(shape_labels)
+        shape_data = shape_data.drop(shape_data.columns[0], axis = 1)
+
+        # Margin vectors
+        margin_data = pd.read_csv("Dataset/data_Mar_64.txt", header = None)
+        margin_col_names = ['species'] + [f'margin_{i+1}' for i in range(margin_data.shape[1] - 1)]
+        margin_data.columns = margin_col_names
+        margin_data = margin_data.drop(margin_data.columns[0], axis = 1)
+
+
+        mixed_ds = pd.concat([shape_data, margin_data], axis = 1,names=[shape_data.columns]+[margin_data.columns])
+        # Split del dataset in train e test
+        train_x, test_x, train_y, test_y = train_test_split(mixed_ds, shape_labels, random_state=0, test_size=0.25)
+        return train_x, test_x, train_y, test_y
+    
     elif type == 'Total':
         
         # Creazione del dataset completo con i vettori di feature di shape, margine e texture
