@@ -275,7 +275,7 @@ class Menu():
         window.title("Clustering results ")
 
         # Funzione per istanziare il classificatore di clustering e mostrare le metriche
-        ari, silhouette_avg, predictions = clustering.cluster_fit(train_x, test_x, train_y, test_y)
+        ari, silhouette_avg = clustering.cluster_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Clustering Results :").pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text = (f"Adjusted Rand Index: {ari}\n",f"Silhouette Score: {silhouette_avg}")).pack(pady=10)

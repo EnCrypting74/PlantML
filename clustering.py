@@ -24,5 +24,5 @@ class clustering():
         ari = adjusted_rand_score(y, clusters)
         silhouette_avg = silhouette_score(X, clusters)
         
-        return ari, silhouette_avg, clusters
+        return ari, silhouette_avg
         
