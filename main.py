@@ -198,7 +198,7 @@ class Menu():
         # Funzione che istanzia il classificatore selezionato con le tecniche di preprocessing scelte
         # Split del dataset in base alla  feature selection : 
         if feature == "Feature Selection : ": feature = "Total"
-        
+
         data = feature
         train_x,test_x, train_y, test_y = DS_Splitter(data)
 
@@ -304,7 +304,7 @@ class Menu():
         
         ttk.Label(window, text ="K-NN Results :").pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = "K-Nearest Neighbors with distance type = Manhattan and k = 16").pack(pady = 5)
+        ttk.Label(window, text = "K-Nearest Neighbours with distance type = Manhattan and k = 16").pack(pady = 5)
         
         predictions = kNN_clas.fit_predict(train_x,train_y,test_x)
         ttk.Label(window, text = calculateMetrics(predictions ,test_y)).pack()
