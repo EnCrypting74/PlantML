@@ -10,7 +10,7 @@ import pandas as pd
 # Import di funzioni create
 from custom_kNN import Custom_kNN as cNN
 from DataSetSplitter import DS_Splitter
-from metrics import calculateMetrics, histo, calc_zeros, show_auc, find_outliers, calc_nan
+from metrics import calculateMetrics, histo, calc_zeros, show_auc, find_outliers, calc_nan, scatterPlot
 from custom_Multi import CustomRandomForest as CRF
 from Preprocessing import normalizeDataset, aggregateFeatures
 from svm import svm
@@ -276,22 +276,22 @@ class Menu():
         window = tk.Toplevel(self.root)
         window.geometry("1000x750")
         window.title("Clustering results ")
-
+    
         # Funzione per istanziare il classificatore di clustering e mostrare le metriche
-        ari, silhouette_avg = clustering.cluster_fit(train_x, test_x, train_y, test_y)
+        ari, silhouette_avg, X, clusters = clustering.cluster_fit(train_x, test_x, train_y, test_y)
         ttk.Label(window, text ="Clustering Results :").pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
         ttk.Label(window, text = (f"Adjusted Rand Index: {ari}\n",f"Silhouette Score: {silhouette_avg}")).pack(pady=10)
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)
         
-        # Riportiamo la curva ROC per le prime 10 classi su 100 per non saturare il grafico
+        # Riportiamo il grafico di clustering
         graph_frame = ttk.Frame(window)
         graph_frame.pack(side = tk.BOTTOM, padx = 10, pady = 10)
-
-        #fig= show_auc(test_y,predictions)
-        #canvas = FigureCanvasTkAgg(fig, master = graph_frame)
-        #canvas.draw()
-        #canvas.get_tk_widget().pack(pady = 20)
+    
+        fig = scatterPlot(X, clusters)
+        canvas = FigureCanvasTkAgg(fig, master = graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
     
     def CustomKNN(self,train_x,test_x, train_y, test_y,preprocessing):
         window = tk.Toplevel(self.root)

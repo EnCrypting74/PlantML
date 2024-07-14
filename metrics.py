@@ -6,6 +6,8 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 from DataSetSplitter import DS_Splitter
 from itertools import cycle
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 def calculateMetrics(predictions, labels):
     #definizione metriche
@@ -135,4 +137,21 @@ def histo(tipo):
         return fig,ax
 
     return
-        
+
+def scatterPlot(X, clusters):
+    # Riduzione della dimensionalità con PCA per la visualizzazione
+    pca = PCA(n_components=2)
+    X_r = pca.fit_transform(X)
+
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(X_r[:, 0], X_r[:, 1], c=clusters, cmap='viridis', s=5)
+    
+    # Aggiunta di una legenda
+    legend = ax.legend(*scatter.legend_elements(), title="Clusters")
+    ax.add_artist(legend)
+    
+    ax.set_title('Scatter Plot of Clusters')
+    ax.set_xlabel('Principal Component 1')
+    ax.set_ylabel('Principal Component 2')
+
+    return fig

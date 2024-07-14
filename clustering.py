@@ -3,9 +3,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import adjusted_rand_score, silhouette_score
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-
+from metrics import scatterPlot
 
 
 class clustering():
@@ -24,5 +22,9 @@ class clustering():
         ari = adjusted_rand_score(y, clusters)
         silhouette_avg = silhouette_score(X, clusters)
         
-        return ari, silhouette_avg
+        
+
+        return ari, silhouette_avg, X, clusters
+    
+    
         
