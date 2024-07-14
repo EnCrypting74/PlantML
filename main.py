@@ -180,7 +180,7 @@ class Menu():
             tk.Checkbutton(preproc_frame, text = option, variable=var).pack()
 
         self.dropdown_value = tk.StringVar(value="Feature Selection : ")
-        options = ["No", "Texture", "Shape","Margin","Tex + Sha", "Tex + Mar",  "Sha + Mar"]
+        options = ["Total", "Texture", "Shape","Margin","Tex + Sha", "Tex + Mar",  "Sha + Mar"]
         dropdown = tk.OptionMenu(feature_frame, self.dropdown_value, *options)
         dropdown.pack(pady=20)
         
@@ -197,13 +197,15 @@ class Menu():
     def trainModel(self, model, preprocessing, feature):
         # Funzione che istanzia il classificatore selezionato con le tecniche di preprocessing scelte
         # Split del dataset in base alla  feature selection : 
-        if feature == "No" :
-                data = 'Total'
-                train_x,test_x, train_y, test_y = DS_Splitter(data)
-        else:
-                data = feature
-                train_x,test_x, train_y, test_y = DS_Splitter(data)
+        if feature == "Feature Selection : ": feature = "Total"
+        
+        data = feature
+        train_x,test_x, train_y, test_y = DS_Splitter(data)
 
+        if ("Aggregation*16" in preprocessing) & ("Aggregation*32" in preprocessing):
+            messagebox.showinfo("Selezionata doppia aggregazione, selezionare solo una modalità")
+            raise TypeError("modello o preprocessing non corretti")
+        
         # Applicazione preprocessing
         if "Normalization" in preprocessing:
                 train_x, test_x = normalizeDataset(train_x, test_x)
@@ -211,6 +213,7 @@ class Menu():
                 train_x,test_x = aggregateFeatures(train_x, test_x, mode = 16)
         if "Aggregation*32" in preprocessing:
                 train_x,test_x = aggregateFeatures(train_x, test_x, mode = 32)
+
         preprocessing.append(feature)
         # Istanzia il classificatore
         if model == 'SVM':
