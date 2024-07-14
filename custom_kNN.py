@@ -7,7 +7,7 @@ from scipy import stats
 # il nostro K-NN compatibile con scikit-learn 
 class Custom_kNN(ClassifierMixin, BaseEstimator):
     
-    def __init__(self, k = 16, distance = 'Manhattan'):
+    def __init__(self, k = 3, distance = 'Manhattan'):
         self.k = k
         self.distance = distance
     
@@ -26,7 +26,7 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
             distances.append(np.abs(row_train - row).max())
         return distances
     
-    def NearNeighbors(self, distances):
+    def NearNeighbours(self, distances):
         label = []
         # Cerchiamo i k Neighbours più vicini e prendiamo le loro label
         for i in range(0, self.k):
@@ -53,10 +53,10 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
                 raise TypeError("Tipo di distanza non supportato")
             # Determinazione delle predizioni in base al valore di k
             if self.k > 1:
-                predict.append(self.NearNeighbors(distances))
+                predict.append(self.NearNeighbours(distances))
             elif self.k == 1:
                 dist_min = np.argmin(distances)
-                predict.append(self.y.iloc[dist_min])
+                predict.append(self.y[dist_min])
             else:
                 raise ValueError("Valore di k errato")
         return predict

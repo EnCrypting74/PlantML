@@ -333,7 +333,7 @@ class Menu():
 
         ttk.Label(window, text = "Random Forest Results :").pack(side = tk.TOP, pady = 10)
         ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = "15 trees with depth = 25").pack(pady = 10)
+        ttk.Label(window, text = (f'{Multi_clas.num_trees} trees with depth = {Multi_clas.depth}')).pack(pady = 10)
         ttk.Label(window, text = calculateMetrics(predictions, test_y)).pack(pady = 10)
         
         ttk.Button(window, text="Back", command = window.destroy).pack(side = tk.BOTTOM, pady = 10)

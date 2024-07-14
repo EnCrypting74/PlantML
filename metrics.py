@@ -23,6 +23,20 @@ def calculateMetrics(predictions, labels):
     
     return(f'Accuracy = {ACC} \nPrecision = {PRE} \nRecall = {REC} \nF1 score = {F1}\n ')
 
+def tuningMetrics(predictions, labels):
+    #definizione metriche
+
+    # Overall accuracy
+    ACC = accuracy_score(labels, predictions)
+    # Recall
+    REC = recall_score(labels, predictions, average='macro',zero_division=0) 
+    # Precision  
+    PRE = precision_score(labels, predictions, average='macro',zero_division=0)
+    # False Positive Rate
+    F1 = f1_score(labels, predictions, average='macro',zero_division=0) 
+    
+    return ACC, PRE, REC, F1
+
 def show_auc(labels, predictions):
        
     # Binarizzazione delle etichette
@@ -55,7 +69,7 @@ def show_auc(labels, predictions):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('ROC curves for 15 classes')
+    plt.title('ROC curves for 10 classes')
     plt.legend(loc="lower right")
 
     return fig
