@@ -1,4 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, normalize
 import pandas as pd
 import numpy as np
 
@@ -22,17 +22,50 @@ def syntheticData(texture_data):
 
     return texture_data
 
-def normalizeDataset(train_x,test_x):
+def normalizeDataset(train_x,test_x,n_type = "Standard"):
+    if n_type == "Standard":
+        # scala il dataset con una standardizzazione standard
+        scaler = StandardScaler()
+        train_x = scaler.fit_transform(train_x)
+        test_x = scaler.fit_transform(test_x)
+        
+        train_x = pd.DataFrame(train_x)
+        test_x = pd.DataFrame(test_x)
 
-    # Normalizza il dataset con una funzione Min-Max
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    train_x = scaler.fit_transform(train_x)
-    test_x = scaler.fit_transform(test_x)
+        return train_x, test_x
     
-    train_x = pd.DataFrame(train_x)
-    test_x = pd.DataFrame(test_x)
+
+    elif n_type == "MinMax":
+        # scala il dataset con una standardizzazione Min-Max
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        train_x = scaler.fit_transform(train_x)
+        test_x = scaler.fit_transform(test_x)
+        
+        train_x = pd.DataFrame(train_x)
+        test_x = pd.DataFrame(test_x)
+        
+        return train_x, test_x
+        
+        
+    elif n_type == "Robust":
+        # scala il dataset con una funzione Min-Max
+        scaler = RobustScaler()
+        train_x = scaler.fit_transform(train_x)
+        test_x = scaler.fit_transform(test_x)
+        
+        train_x = pd.DataFrame(train_x)
+        test_x = pd.DataFrame(test_x)
+        
+        return train_x, test_x
     
-    return train_x, test_x
+    elif n_type == "Normalization":
+        # Normalizza il dataset
+        
+        train_x = pd.DataFrame(normalize(train_x, norm = 'l1'))
+        test_x = pd.DataFrame(normalize(test_x, norm = 'l1'))
+        
+        return train_x, test_x
+    
 
 def aggregateFeatures(train_x, test_x, mode = 16):
     # Funzione per l'aggregazione delle features da 64 valori per feature ad 16 valore per feature

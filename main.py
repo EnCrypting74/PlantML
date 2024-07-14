@@ -139,7 +139,7 @@ class Menu():
         # Creiamo la schermata per la scelta del modello
         train_screen = tk.Toplevel(self.root)
         train_screen.title("Training")
-        train_screen.geometry("500x300")
+        train_screen.geometry("500x400")
 
         # Creiamo i Frame per separare le varie opzioni
         title_frame = tk.Frame(train_screen, relief = "raised")
@@ -151,7 +151,7 @@ class Menu():
         preproc_frame = tk.Frame(train_screen)
         preproc_frame.pack( padx = 10, pady = 10)
         bottom_frame = tk.Frame(train_screen)
-        bottom_frame.pack(side = tk.BOTTOM, padx = 20)
+        bottom_frame.pack(side = tk.BOTTOM, padx = 10)
 
         ttk.Label(title_frame, text = "Model Selection").pack(side = tk.TOP, anchor = "nw")
 
@@ -170,6 +170,9 @@ class Menu():
         # Creazione scelta preprocessing come checkboxes (non mutualmente esclusivi)
         ttk.Label(preproc_frame, text = "Select Preprocessing :   ").pack(side = tk.TOP, anchor = "ne")
         self.checkbox_values = {
+                "MinMax": tk.IntVar(),    
+                "Standard": tk.IntVar(),
+                "Robust": tk.IntVar(),
                 "Normalization": tk.IntVar(),
                 "Aggregation*16": tk.IntVar(),
                 "Aggregation*32": tk.IntVar()
@@ -205,10 +208,19 @@ class Menu():
         if ("Aggregation*16" in preprocessing) & ("Aggregation*32" in preprocessing):
             messagebox.showinfo("Selezionata doppia aggregazione, selezionare solo una modalità")
             raise TypeError("modello o preprocessing non corretti")
+        if len(preprocessing)>2:
+            messagebox.showinfo("Selezionate troppe opzioni")
+            raise TypeError("modello o preprocessing non corretti")
         
         # Applicazione preprocessing
+        if "Standard" in preprocessing:
+                train_x, test_x = normalizeDataset(train_x, test_x, n_type = "Standard")
+        if "MinMax" in preprocessing:
+                train_x, test_x = normalizeDataset(train_x, test_x, n_type = "MinMax")
+        if "Robust" in preprocessing:
+                train_x, test_x = normalizeDataset(train_x, test_x, n_type = "Robust")
         if "Normalization" in preprocessing:
-                train_x, test_x = normalizeDataset(train_x, test_x)
+                train_x, test_x = normalizeDataset(train_x, test_x, n_type = "Normalization")
         if "Aggregation*16" in preprocessing:
                 train_x,test_x = aggregateFeatures(train_x, test_x, mode = 16)
         if "Aggregation*32" in preprocessing:
