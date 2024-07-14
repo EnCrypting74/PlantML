@@ -49,6 +49,9 @@ def DS_Splitter(type = 'Total', split = 'T'):
         texture_data = pd.read_csv("Dataset/data_Tex_64.txt", header = None)
         texture_col_names = ['species'] + [f'texture_{i+1}' for i in range(texture_data.shape[1] - 1)]
         texture_data.columns = texture_col_names
+        
+        # Aggiunta record sintetico
+        texture_data = syntheticData(texture_data)
         texture_labels = texture_data['species']
 
         # Encoding labels 
