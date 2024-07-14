@@ -61,7 +61,7 @@ def show_auc(labels, predictions):
 
     # Plot delle curve ROC per alcune classi (per non sovraccaricare il grafico)
     colors = cycle(['aqua', 'darkorange', 'cornflowerblue','green','purple'])
-    for i, color in zip(range(10), colors):  # Mostra solo 10 classi
+    for i, color in zip(range(1,11,), colors):  # Mostra solo 10 classi
         plt.plot(fpr[i], tpr[i], color=color, lw=2, label='ROC curve of class {0} (area = {1:0.2f})'.format(i, roc_auc[i]))
 
     plt.plot([0, 1], [0, 1], 'k--', lw=2)
@@ -149,7 +149,18 @@ def histo(tipo):
         ax.set_ylabel("Frequenza")
 
         return fig,ax
+    
+    if tipo == 'Shape':
+        row , _, _ , _= DS_Splitter(type = 'Shape')
+        h_data = row.iloc[:,1]
 
+        fig, ax = plt.subplots(figsize = (4,2))
+        ax.hist(h_data, bins=20, color='green', edgecolor='black')
+        ax.set_title("Istogramma shape primo campione")
+        ax.set_xlabel("Valore")
+        ax.set_ylabel("Frequenza")
+
+        return fig,ax
     return
 
 def scatterPlot(X, clusters):

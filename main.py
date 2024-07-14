@@ -115,7 +115,7 @@ class Menu():
     def dataGraph(self):
         datagraph_screen = tk.Toplevel(self.root)
         datagraph_screen.title("Dataset")
-        datagraph_screen.geometry("500x600")
+        datagraph_screen.geometry("500x900")
 
         # Creiamo il frame che conterrà le info
         descriptor_frame = ttk.Frame(datagraph_screen)
@@ -127,6 +127,11 @@ class Menu():
         canvas.get_tk_widget().pack(pady = 20)
         
         fig,ax = histo('Texture')
+        canvas = FigureCanvasTkAgg(fig, master = descriptor_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady = 20)
+
+        fig,ax = histo('Shape')
         canvas = FigureCanvasTkAgg(fig, master = descriptor_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(pady = 20)
@@ -207,9 +212,6 @@ class Menu():
 
         if ("Aggregation*16" in preprocessing) & ("Aggregation*32" in preprocessing):
             messagebox.showinfo("Selezionata doppia aggregazione, selezionare solo una modalità")
-            raise TypeError("modello o preprocessing non corretti")
-        if len(preprocessing)>2:
-            messagebox.showinfo("Selezionate troppe opzioni")
             raise TypeError("modello o preprocessing non corretti")
         
         # Applicazione preprocessing
@@ -316,7 +318,7 @@ class Menu():
         
         ttk.Label(window, text ="K-NN Results :").pack(side = tk.TOP, pady=10)
         ttk.Label(window, text =("Selected options :",preprocessing)).pack(side = tk.TOP, pady=10)
-        ttk.Label(window, text = "K-Nearest Neighbours with distance type = Manhattan and k = 16").pack(pady = 5)
+        ttk.Label(window, text = f'K-Nearest Neighbours with distance type = Manhattan and k = {kNN_clas.k}').pack(pady = 5)
         
         predictions = kNN_clas.fit_predict(train_x,train_y,test_x)
         ttk.Label(window, text = calculateMetrics(predictions ,test_y)).pack()
@@ -365,11 +367,11 @@ class Menu():
         window.geometry("1000x750")
         window.title("SupportVectorMachine results ")
 
-        data = 'Tex + Mar'
+        data = 'Total'
         train_x,test_x, train_y, test_y = DS_Splitter(data)
-        train_x, test_x = normalizeDataset(train_x, test_x)
+        train_x, test_x = normalizeDataset(train_x, test_x, n_type = "Standard")
 
-        ttk.Label(window, text ="Il modello migliore risulta la Support Vector Machine addestrata sulle feature di texture e margin\nLe performance migliorano di vari punti percentuali con la normalizzazione MinMax").pack(side = tk.TOP, pady=10)
+        ttk.Label(window, text ="Il modello migliore risulta la Support Vector Machine addestrata su tutto il dataset\nLe performance migliorano di vari punti percentuali con la normalizzazione Standard").pack(side = tk.TOP, pady=10)
 
         # Funzione per istanziare il classificatore SVM e mostrare le metriche
         predictions = svm.svm_fit(train_x, test_x, train_y, test_y)
