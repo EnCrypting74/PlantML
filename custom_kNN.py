@@ -28,12 +28,12 @@ class Custom_kNN(ClassifierMixin, BaseEstimator):
     
     def NearNeighbors(self, distances):
         label = []
-        # Cerchiamo i k Neighbors più vicini e prendiamo le loro label
+        # Cerchiamo i k Neighbours più vicini e prendiamo le loro label
         for i in range(0, self.k):
             dist_min = np.argmin(distances)
             label.append(self.y[dist_min])
             distances[dist_min] = float('inf')
-        # Determiniamo l'etichetta da predire in base a quella più frequente tra i k Neighbors
+        # Determiniamo l'etichetta da predire in base a quella più frequente tra i k Neighbours
         label_classe = stats.mode(label).mode
         return label_classe
 
