@@ -79,8 +79,10 @@ def tuning_KNN_custom():
 
             acc, pre , rec , f1 = tuningMetrics(predictions, test_y)
 
+            # Salva i risultati in un dizionario
             model_stats[f'{dist} with {k} neighbours'] = [acc, pre, rec, f1]
     
+    # Estrai il modello con migliori performance
     best_model = max(model_stats, key=model_stats.get)
     max_values = model_stats[best_model]
 
@@ -94,7 +96,7 @@ def tuning_RF_custom():
     trees_range = list(range(5, 100,10))
     depth_range = list(range(10,50,5))
     model_stats = {}
-    
+    # Addestra con tutte le possibili combinazioni
     for trees in trees_range:
         for depth in depth_range:
             RF = CustomRandomForest(trees,depth)
@@ -102,9 +104,10 @@ def tuning_RF_custom():
             predictions = RF.fit_predict(train_x,train_y,test_x)
 
             acc, pre , rec , f1 = tuningMetrics(predictions, test_y)
-
+            # Salva i risultati in un dizionario
             model_stats[f'{trees} trees with depth : {depth}'] = [acc, pre, rec, f1]
-    
+
+    # Estrai il modello con migliori performance
     best_model = max(model_stats, key=model_stats.get)
     max_values = model_stats[best_model]
 
